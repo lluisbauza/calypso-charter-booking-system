@@ -23,11 +23,6 @@ Boat Charter Booking System developed in Java, Swing and MySQL.
 - Database design completed
 - Initial schema created
 
-## To-Do List
-- Create a class for each entity (atributes are columns)
-- For each class: atributes, constructors, getters/setters toString(), validations.
-- Commit: Create initial domain model
-
 ## Run the app
 1. Run schema.sql
 2. Run sample_data.sql
