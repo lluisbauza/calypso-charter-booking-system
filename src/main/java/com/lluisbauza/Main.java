@@ -1,20 +1,26 @@
 package com.lluisbauza;
 
+import com.lluisbauza.calipso.dao.AgencyDao;
+import com.lluisbauza.calipso.model.Agency;
 import com.lluisbauza.calipso.util.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Main {
-    static void main() throws SQLException, ClassNotFoundException {
-        Connection con = ConnectionManager.getCon();
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("select * from users");
+    public static void main(String[] args) throws ClassNotFoundException {
+        try {
+            AgencyDao agencyDao = new AgencyDao();
 
-        while (rs.next()) {
-            System.out.println(rs.getString(1));
+
+            Agency agency = new Agency("321", "holi", "holii", 10);
+            agencyDao.print();
+
+            agencyDao.addAgency(agency);
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
         }
+
     }
 }
