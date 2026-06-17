@@ -8,7 +8,7 @@ import java.util.List;
 public interface CrudDao<T> {
 
     void create(T t) throws SQLException, ClassNotFoundException;
-    T read(int id);
+    T read(int id) throws SQLException, ClassNotFoundException;
     void update(T t);
     void delete(int id);
     List<T> listAll();

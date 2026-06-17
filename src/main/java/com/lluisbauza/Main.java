@@ -12,11 +12,14 @@ public class Main {
         try {
             AgencyDao agencyDao = new AgencyDao();
 
+            // para probar conexión y agencyDao.create();
+//            Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
+//            agencyDao.print();
+//            agencyDao.create(agency);
 
-            Agency agency = new Agency("321", "holi", "holii", 10);
-            agencyDao.print();
-
-            agencyDao.create(agency);
+            // para probar conexión y agencyDao.read();
+            Agency agency = agencyDao.read(3);
+            System.out.println(agency);
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

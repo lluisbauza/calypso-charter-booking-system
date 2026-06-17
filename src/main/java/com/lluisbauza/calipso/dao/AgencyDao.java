@@ -23,7 +23,7 @@ public class AgencyDao implements CrudDao<Agency> {
                 ResultSet rs = st.executeQuery(sql)
         ) {
             while (rs.next()) {
-                System.out.println(rs.getString(1));
+                System.out.println(rs.getString(2));
             }
         }
     }
