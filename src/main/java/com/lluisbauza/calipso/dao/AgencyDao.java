@@ -13,26 +13,40 @@ public class AgencyDao implements CrudDao<Agency> {
     public AgencyDao() throws SQLException, ClassNotFoundException {
     }
 
-    public void print() throws SQLException {
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("select * from agencies");
-        while (rs.next()) {
-            System.out.println(rs.getString(1));
+    // para realizar pruebas
+    public void print() throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from agencies";
+        try(
+                Connection con = ConnectionManager.getCon();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql)
+        ) {
+            while (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
         }
     }
 
     @Override
-    public void create(Agency agency) throws SQLException {
-        PreparedStatement st = con.prepareStatement("INSERT INTO agencies (cif, name, affiliate_code, discount) " +
-                "VALUES (?, ?, ?, ?)");
+    public void create(Agency agency) throws SQLException, ClassNotFoundException {
 
-        st.setString(1, agency.getCif());
-        st.setString(2, agency.getName());
-        st.setString(3, agency.getAffiliateCode());
-        st.setDouble(4, agency.getDiscount());
+        String sql = "INSERT INTO agencies (cif, name, affiliate_code, discount) VALUES (?, ?, ?, ?)";
 
-        st.executeUpdate();
-        con.close();
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ){
+
+            pstmt.setString(1, agency.getCif());
+            pstmt.setString(2, agency.getName());
+            pstmt.setString(3, agency.getAffiliateCode());
+            pstmt.setDouble(4, agency.getDiscount());
+
+            pstmt.executeUpdate();
+
+        }
+
     }
 
     @Override
