@@ -50,8 +50,28 @@ public class AgencyDao implements CrudDao<Agency> {
     }
 
     @Override
-    public Agency read(int id) {
-        return null;
+    public Agency read(int id) throws SQLException, ClassNotFoundException {
+
+        String sql = "SELECT * FROM agencies WHERE id_agency = " + id + "";
+        Agency agency = null;
+
+        try(
+                Connection con = ConnectionManager.getCon();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql)
+        ){
+            if (rs.next()) {
+                agency = new Agency(
+                        rs.getInt("id_agency"),
+                        rs.getString("cif"),
+                        rs.getString("name"),
+                        rs.getString("affiliate_code"),
+                        rs.getDouble("discount")
+                );
+            }
+        }
+
+        return agency;
     }
 
     @Override
