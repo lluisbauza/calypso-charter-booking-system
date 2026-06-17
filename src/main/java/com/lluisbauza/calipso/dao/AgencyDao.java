@@ -4,8 +4,10 @@ import com.lluisbauza.calipso.model.Agency;
 import com.lluisbauza.calipso.util.ConnectionManager;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AgencyDao {
+public class AgencyDao implements CrudDao<Agency> {
     Connection con = ConnectionManager.getCon();
 
     public AgencyDao() throws SQLException, ClassNotFoundException {
@@ -19,7 +21,8 @@ public class AgencyDao {
         }
     }
 
-    public void addAgency (Agency agency) throws SQLException {
+    @Override
+    public void create(Agency agency) throws SQLException {
         PreparedStatement st = con.prepareStatement("INSERT INTO agencies (cif, name, affiliate_code, discount) " +
                 "VALUES (?, ?, ?, ?)");
 
@@ -32,4 +35,20 @@ public class AgencyDao {
         con.close();
     }
 
+    @Override
+    public Agency read(int id) {
+        return null;
+    }
+
+    @Override
+    public void update(Agency agency) {}
+
+    @Override
+    public void delete(int id) {}
+
+    @Override
+    public List<Agency> listAll(){
+        List <Agency> agencies = new ArrayList<>();
+        return agencies;
+    }
 }

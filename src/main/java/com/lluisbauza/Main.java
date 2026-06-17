@@ -16,7 +16,7 @@ public class Main {
             Agency agency = new Agency("321", "holi", "holii", 10);
             agencyDao.print();
 
-            agencyDao.addAgency(agency);
+            agencyDao.create(agency);
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
