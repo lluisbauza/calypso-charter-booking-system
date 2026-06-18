@@ -9,6 +9,11 @@ import java.sql.Statement;
 
 public class Main {
     public static void main(String[] args) throws ClassNotFoundException {
+        testAgencyDao();
+
+    }
+
+    private static void testAgencyDao() throws ClassNotFoundException {
         try {
             AgencyDao agencyDao = new AgencyDao();
 
@@ -18,12 +23,19 @@ public class Main {
 //            agencyDao.create(agency);
 
             // para probar conexión y agencyDao.read();
-            Agency agency = agencyDao.read(3);
-            System.out.println(agency);
+//            Agency agency = agencyDao.read(3);
+//            System.out.println(agency);
+
+            // para probar conexión y agencyDao.update();
+            Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
+            agencyDao.print();
+            agencyDao.update(agency);
+
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-
     }
+
+
 }

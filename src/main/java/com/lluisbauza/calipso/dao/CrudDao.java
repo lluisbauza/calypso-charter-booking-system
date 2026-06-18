@@ -9,7 +9,7 @@ public interface CrudDao<T> {
 
     void create(T t) throws SQLException, ClassNotFoundException;
     T read(int id) throws SQLException, ClassNotFoundException;
-    void update(T t);
+    void update(T t) throws SQLException, ClassNotFoundException;
     void delete(int id);
     List<T> listAll();
 
