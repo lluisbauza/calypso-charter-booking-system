@@ -2,44 +2,56 @@ package com.lluisbauza;
 
 import com.lluisbauza.calipso.dao.AgencyDao;
 import com.lluisbauza.calipso.model.Agency;
-import com.lluisbauza.calipso.util.ConnectionManager;
 
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws ClassNotFoundException {
-        testAgencyDao();
+    public static void main(String[] args) {
+        try {
+            testListAgencyDao();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 
-    private static void testAgencyDao() throws ClassNotFoundException {
-        try {
-            AgencyDao agencyDao = new AgencyDao();
+    private static void testListAgencyDao() throws SQLException, ClassNotFoundException {
+        AgencyDao agencyDao = new AgencyDao();
 
-            // para probar conexión y agencyDao.create();
-//            Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
-//            agencyDao.print();
-//            agencyDao.create(agency);
-
-//             agencyDao.read();
-//            Agency agency = agencyDao.read(3);
-//            System.out.println(agency);
-
-            // para probar conexión y agencyDao.update();
-//            Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
-//            agencyDao.print();
-//            agencyDao.update(agency);
-
-//             para probar conexión y agencyDao.delete();
-//            Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
-//            agencyDao.delete(agencyDao.getIdByCif(agency.getCif()));
-
-
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+        List<Agency> agencies = agencyDao.listAll();
+        for (Agency agency : agencies) {
+            System.out.println(agency);
+            System.out.println();
         }
     }
 
+    private static void testDeleteAgencyDao() throws SQLException, ClassNotFoundException {
+        AgencyDao agencyDao = new AgencyDao();
+
+        Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
+        agencyDao.delete(agencyDao.getIdByCif(agency.getCif()));
+    }
+
+    private static void testUpdateAgencyDao() throws SQLException, ClassNotFoundException {
+        AgencyDao agencyDao = new AgencyDao();
+
+        Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
+        agencyDao.update(agency);
+    }
+
+    private static void testReadAgencyDao() throws SQLException, ClassNotFoundException {
+        AgencyDao agencyDao = new AgencyDao();
+
+        Agency agency = agencyDao.read(3);
+        System.out.println(agency);
+    }
+
+    private static void testCreateAgencyDao() throws SQLException, ClassNotFoundException {
+        AgencyDao agencyDao = new AgencyDao();
+
+        Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
+        agencyDao.create(agency);
+    }
 
 }

@@ -12,21 +12,6 @@ public class AgencyDao implements CrudDao<Agency> {
     public AgencyDao() throws SQLException, ClassNotFoundException {
     }
 
-    // para realizar pruebas
-    public void print() throws SQLException, ClassNotFoundException {
-
-        String sql = "select * from agencies";
-        try(
-                Connection con = ConnectionManager.getCon();
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery(sql)
-        ) {
-            while (rs.next()) {
-                System.out.println(rs.getString(2));
-            }
-        }
-    }
-
     @Override
     public void create(Agency agency) throws SQLException, ClassNotFoundException {
 
@@ -35,7 +20,7 @@ public class AgencyDao implements CrudDao<Agency> {
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql)
-        ){
+        ) {
 
             pstmt.setString(1, agency.getCif());
             pstmt.setString(2, agency.getName());
@@ -54,12 +39,11 @@ public class AgencyDao implements CrudDao<Agency> {
         String sql = "SELECT * FROM agencies WHERE id_agency = ?";
         Agency agency = null;
 
-        try(
+        try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql);
-        ){
+        ) {
             pstmt.setInt(1, id);
-            pstmt.executeQuery();
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -85,7 +69,7 @@ public class AgencyDao implements CrudDao<Agency> {
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql)
-        ){
+        ) {
 
             pstmt.setString(1, agency.getName());
             pstmt.setDouble(2, agency.getDiscount());
@@ -100,10 +84,10 @@ public class AgencyDao implements CrudDao<Agency> {
     public void delete(int id) throws SQLException, ClassNotFoundException {
         String sql = "DELETE FROM agencies WHERE id_agency = ?";
 
-        try(
+        try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql)
-        ){
+        ) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         }
@@ -111,8 +95,28 @@ public class AgencyDao implements CrudDao<Agency> {
     }
 
     @Override
-    public List<Agency> listAll(){
-        List <Agency> agencies = new ArrayList<>();
+    public List<Agency> listAll() throws SQLException, ClassNotFoundException {
+        List<Agency> agencies = new ArrayList<>();
+
+        String sql = "SELECT * FROM agencies";
+
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ) {
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Agency agency = new Agency(
+                        rs.getInt("id_agency"),
+                        rs.getString("cif"),
+                        rs.getString("name"),
+                        rs.getString("affiliate_code"),
+                        rs.getDouble("discount")
+                );
+                agencies.add(agency);
+            }
+        }
         return agencies;
     }
 
@@ -120,10 +124,10 @@ public class AgencyDao implements CrudDao<Agency> {
         int id = -1;
 
         String sql = "SELECT id_agency FROM agencies WHERE cif = ?";
-        try(
+        try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql)
-        ){
+        ) {
             pstmt.setString(1, cif);
 
             ResultSet rs = pstmt.executeQuery();

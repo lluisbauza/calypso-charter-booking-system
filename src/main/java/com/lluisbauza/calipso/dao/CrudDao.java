@@ -11,6 +11,6 @@ public interface CrudDao<T> {
     T read(int id) throws SQLException, ClassNotFoundException;
     void update(T t) throws SQLException, ClassNotFoundException;
     void delete(int id) throws SQLException, ClassNotFoundException;
-    List<T> listAll();
+    List<T> listAll() throws SQLException, ClassNotFoundException;
 
 }
