@@ -22,14 +22,18 @@ public class Main {
 //            agencyDao.print();
 //            agencyDao.create(agency);
 
-            // para probar conexión y agencyDao.read();
+//             agencyDao.read();
 //            Agency agency = agencyDao.read(3);
 //            System.out.println(agency);
 
             // para probar conexión y agencyDao.update();
-            Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
-            agencyDao.print();
-            agencyDao.update(agency);
+//            Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
+//            agencyDao.print();
+//            agencyDao.update(agency);
+
+//             para probar conexión y agencyDao.delete();
+//            Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
+//            agencyDao.delete(agencyDao.getIdByCif(agency.getCif()));
 
 
         } catch (SQLException ex) {

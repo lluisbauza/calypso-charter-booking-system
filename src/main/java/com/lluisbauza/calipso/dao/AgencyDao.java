@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AgencyDao implements CrudDao<Agency> {
-    Connection con = ConnectionManager.getCon();
 
     public AgencyDao() throws SQLException, ClassNotFoundException {
     }
@@ -52,14 +51,18 @@ public class AgencyDao implements CrudDao<Agency> {
     @Override
     public Agency read(int id) throws SQLException, ClassNotFoundException {
 
-        String sql = "SELECT * FROM agencies WHERE id_agency = " + id + "";
+        String sql = "SELECT * FROM agencies WHERE id_agency = ?";
         Agency agency = null;
 
         try(
                 Connection con = ConnectionManager.getCon();
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery(sql)
+                PreparedStatement pstmt = con.prepareStatement(sql);
         ){
+            pstmt.setInt(1, id);
+            pstmt.executeQuery();
+
+            ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
                 agency = new Agency(
                         rs.getInt("id_agency"),
@@ -94,11 +97,42 @@ public class AgencyDao implements CrudDao<Agency> {
     }
 
     @Override
-    public void delete(int id) {}
+    public void delete(int id) throws SQLException, ClassNotFoundException {
+        String sql = "DELETE FROM agencies WHERE id_agency = ?";
+
+        try(
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ){
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        }
+
+    }
 
     @Override
     public List<Agency> listAll(){
         List <Agency> agencies = new ArrayList<>();
         return agencies;
+    }
+
+    public int getIdByCif(String cif) throws SQLException, ClassNotFoundException {
+        int id = -1;
+
+        String sql = "SELECT id_agency FROM agencies WHERE cif = ?";
+        try(
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ){
+            pstmt.setString(1, cif);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                id = rs.getInt("id_agency");
+            }
+        }
+
+        return id;
     }
 }
