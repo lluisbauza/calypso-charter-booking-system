@@ -39,12 +39,12 @@ public class ManualTestBoatDao {
         boatDao.update(boat);
     }
 
-    private static void testReadBoatDao() throws SQLException, ClassNotFoundException {
-        BoatDao boatDao = new BoatDao();
-
-        Boat boat = boatDao.read(3);
-        System.out.println(boat);
-    }
+//    private static void testReadBoatDao() throws SQLException, ClassNotFoundException {
+//        BoatDao boatDao = new BoatDao();
+//
+//        Boat boat = boatDao.read(3);
+//        System.out.println(boat);
+//    }
 
     private static void testCreateBoatDao() throws SQLException, ClassNotFoundException {
         BoatDao boatDao = new BoatDao();

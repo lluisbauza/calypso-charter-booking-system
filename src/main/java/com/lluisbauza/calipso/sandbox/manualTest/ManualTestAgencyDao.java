@@ -36,12 +36,12 @@ public class ManualTestAgencyDao {
         agencyDao.delete(agencyDao.findIdByCif(agency.getCif()));
     }
 
-    private static void testUpdateAgencyDao() throws SQLException, ClassNotFoundException {
-        AgencyDao agencyDao = new AgencyDao();
-
-        Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
-        agencyDao.update(agency);
-    }
+//    private static void testUpdateAgencyDao() throws SQLException, ClassNotFoundException {
+//        AgencyDao agencyDao = new AgencyDao();
+//
+//        Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
+//        agencyDao.update(agency);
+//    }
 
     private static void testReadAgencyDao() throws SQLException, ClassNotFoundException {
         AgencyDao agencyDao = new AgencyDao();

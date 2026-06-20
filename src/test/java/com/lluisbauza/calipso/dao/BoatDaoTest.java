@@ -54,17 +54,20 @@ public class BoatDaoTest {
     }
 
     @Test
-    void update_shouldModifyCapacity() throws SQLException, ClassNotFoundException {
+    void update_shouldModifyNameAndCapacity() throws SQLException, ClassNotFoundException {
 
-        Boat boat = new Boat("Queen Anne's Revenge", 22);
+        Boat boat = boatDao.read(createdId);
+
+        boat.setBoatName("Anne's Revenge");
+        boat.setCapacity(25);
 
         boatDao.update(boat);
 
-        Boat boatUpdated = boatDao.read(createdId);
+        boat = boatDao.read(createdId);
 
-        assertNotNull(boatUpdated);
-        assertEquals("Queen Anne's Revenge", boatUpdated.getBoatName());
-        assertEquals(22, boatUpdated.getCapacity());
+        assertNotNull(boat);
+        assertEquals("Anne's Revenge", boat.getBoatName());
+        assertEquals(25, boat.getCapacity());
 
     }
 

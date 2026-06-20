@@ -63,7 +63,7 @@ public class BoatDao implements CrudDao<Boat> {
     @Override
     public void update(Boat boat) throws SQLException, ClassNotFoundException {
 
-        String sql = "UPDATE boats SET boat_name = ?, capacity = ? WHERE boat_name = ?";
+        String sql = "UPDATE boats SET boat_name = ?, capacity = ? WHERE id_boat = ?";
 
         try (
                 Connection con = ConnectionManager.getCon();
@@ -71,7 +71,7 @@ public class BoatDao implements CrudDao<Boat> {
         ) {
             pstmt.setString(1, boat.getBoatName());
             pstmt.setInt(2, boat.getCapacity());
-            pstmt.setString(3, boat.getBoatName());
+            pstmt.setInt(3, boat.getIdBoat());
 
             pstmt.executeUpdate();
 

@@ -56,19 +56,25 @@ public class AgencyDaoTest {
     }
 
     @Test
-    void update_shouldModifyInfo() throws SQLException, ClassNotFoundException {
+    void update_shouldModifyNameAndDiscountButNotAffiliateCode() throws SQLException, ClassNotFoundException {
 
         Agency oldAgency = agencyDao.read(createdId);
 
-        Agency agency = new Agency("x12345678", "Triton", "TRX876", 13);
+        String oldAffiliateCode = oldAgency.getAffiliateCode();
 
-        agencyDao.update(agency);
+        oldAgency.setName("Triton");
+        oldAgency.setAffiliateCode("TRX876");
+        oldAgency.setDiscount(13);
+
+        agencyDao.update(oldAgency);
 
         Agency agencyUpdated = agencyDao.read(createdId);
 
+        assertNotNull(agencyUpdated);
+
         assertEquals("Triton", agencyUpdated.getName());
         assertEquals(13, agencyUpdated.getDiscount());
-        assertEquals(oldAgency.getAffiliateCode(), agencyUpdated.getAffiliateCode());
+        assertEquals(oldAffiliateCode, agencyUpdated.getAffiliateCode());
 
     }
 

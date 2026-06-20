@@ -64,7 +64,7 @@ public class AgencyDao implements CrudDao<Agency> {
     @Override
     public void update(Agency agency) throws SQLException, ClassNotFoundException {
 
-        String sql = "UPDATE agencies SET name = ?, discount = ? WHERE cif = ?";
+        String sql = "UPDATE agencies SET name = ?, discount = ? WHERE id_agency = ?";
 
         try (
                 Connection con = ConnectionManager.getCon();
@@ -73,7 +73,7 @@ public class AgencyDao implements CrudDao<Agency> {
 
             pstmt.setString(1, agency.getName());
             pstmt.setDouble(2, agency.getDiscount());
-            pstmt.setString(3, agency.getCif());
+            pstmt.setInt(3, agency.getIdAgency());
 
             pstmt.executeUpdate();
 
