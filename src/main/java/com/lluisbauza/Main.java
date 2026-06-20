@@ -10,88 +10,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            testListBoatDao();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
 
-    }
-    private static void testListBoatDao() throws SQLException, ClassNotFoundException {
-        BoatDao boatDao = new BoatDao();
 
-        List<Boat> boats = boatDao.listAll();
-        for (Boat boat : boats) {
-            System.out.println(boat);
-            System.out.println();
-        }
-    }
-
-    private static void testDeleteBoatDao() throws SQLException, ClassNotFoundException {
-        BoatDao boatDao = new BoatDao();
-
-        Boat boat = new Boat("Tomeu", 18);
-        boatDao.delete(boatDao.findByName(boat.getBoatName()).getIdBoat());
-    }
-
-    private static void testUpdateBoatDao() throws SQLException, ClassNotFoundException {
-        BoatDao boatDao = new BoatDao();
-
-        Boat boat = new Boat("Tomeu", 4);
-        boatDao.update(boat);
-    }
-
-    private static void testReadBoatDao() throws SQLException, ClassNotFoundException {
-        BoatDao boatDao = new BoatDao();
-
-        Boat boat = boatDao.read(3);
-        System.out.println(boat);
-    }
-
-    private static void testCreateBoatDao() throws SQLException, ClassNotFoundException {
-        BoatDao boatDao = new BoatDao();
-
-        Boat boat = new Boat("Tomeu", 15);
-        boatDao.create(boat);
-    }
-
-    ///////////
-    private static void testListAgencyDao() throws SQLException, ClassNotFoundException {
-        AgencyDao agencyDao = new AgencyDao();
-
-        List<Agency> agencies = agencyDao.listAll();
-        for (Agency agency : agencies) {
-            System.out.println(agency);
-            System.out.println();
-        }
-    }
-
-    private static void testDeleteAgencyDao() throws SQLException, ClassNotFoundException {
-        AgencyDao agencyDao = new AgencyDao();
-
-        Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
-        agencyDao.delete(agencyDao.findIdByCif(agency.getCif()));
-    }
-
-    private static void testUpdateAgencyDao() throws SQLException, ClassNotFoundException {
-        AgencyDao agencyDao = new AgencyDao();
-
-        Agency agency = new Agency("x24569834", "adeu", "adeuuu", 24.5);
-        agencyDao.update(agency);
-    }
-
-    private static void testReadAgencyDao() throws SQLException, ClassNotFoundException {
-        AgencyDao agencyDao = new AgencyDao();
-
-        Agency agency = agencyDao.read(3);
-        System.out.println(agency);
-    }
-
-    private static void testCreateAgencyDao() throws SQLException, ClassNotFoundException {
-        AgencyDao agencyDao = new AgencyDao();
-
-        Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
-        agencyDao.create(agency);
     }
 
 }
