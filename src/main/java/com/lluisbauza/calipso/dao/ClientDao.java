@@ -1,9 +1,13 @@
 package com.lluisbauza.calipso.dao;
 
+import com.lluisbauza.calipso.model.Client;
+
 import java.sql.SQLException;
 import java.util.List;
 
-public class Client implements CrudDao<Client> {
+public class ClientDao implements CrudDao<Client> {
+
+    public ClientDao(){}
 
     @Override
     public void create(Client client) throws SQLException, ClassNotFoundException {

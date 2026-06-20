@@ -40,8 +40,7 @@ CREATE TABLE password_history (
 -- 4- boats table
 CREATE TABLE boats (
 	id_boat INT PRIMARY KEY AUTO_INCREMENT,
-	registration VARCHAR (15) UNIQUE NOT NULL,
-    boat_name VARCHAR (10) UNIQUE NOT NULL,
+    boat_name VARCHAR (25) UNIQUE NOT NULL,
     capacity INT NOT NULL
 );
 
