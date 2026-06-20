@@ -5,14 +5,17 @@ public class Agency {
     private String cif, name, affiliateCode;
     private double discount;
 
+    public Agency(String cif, String name, double discount) {
+        this.cif = cif;
+        this.name = name;
+        this.discount = discount;
+    }
+
     public Agency(String cif, String name, String affiliateCode, double discount) {
-        this.idAgency = idAgency;
         this.cif = cif;
         this.name = name;
         this.affiliateCode = affiliateCode;
         this.discount = discount;
-
-
     }
 
     public Agency(int idAgency, String cif, String name, String affiliateCode, double discount) {

@@ -10,21 +10,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AgencyDaoTest {
 
-    private AgencyDao dao;
+    private AgencyDao agencyDao;
     private int createdId;
+    private String testCif;
 
     @BeforeEach
     void setUp() throws SQLException, ClassNotFoundException{
-        dao = new AgencyDao();
+        agencyDao = new AgencyDao();
         Agency agency = new Agency("x12345678", "Poseidon", "POX123", 25);
-        dao.create(agency);
-        createdId = dao.findIdByCif("x12345678");
+        agencyDao.create(agency);
+        createdId = agencyDao.findIdByCif("x12345678");
+    }
+
+    @Test
+    void create_shouldInsertRecord() throws SQLException, ClassNotFoundException {
+
+        testCif = "y87654321";
+
+        Agency agency = new Agency(testCif, "Triton", "TRX876", 13);
+        agencyDao.create(agency);
+
+        Agency agencyNew = agencyDao.findByCif(testCif);
+
+        assertNotNull(agencyNew);
+        int id = agencyDao.findIdByCif(testCif);
+
+        assertEquals(id, agencyNew.getIdAgency());
+        assertEquals("Triton", agencyNew.getName());
+        assertEquals("TRX876", agencyNew.getAffiliateCode());
+
     }
 
     @Test
     void read_shouldReturnAgency() throws SQLException, ClassNotFoundException {
 
-        Agency agency = dao.read(createdId);
+        Agency agency = agencyDao.read(createdId);
 
         assertNotNull(agency);
 
@@ -34,9 +54,26 @@ public class AgencyDaoTest {
 
     }
 
+    @Test
+    void update_shouldModifyInfo() throws SQLException, ClassNotFoundException {
+
+        Agency agency = new Agency("x12345678", "Triton", "TRX876", 13);
+
+        agencyDao.update(agency);
+
+        Agency agencyUpdated = agencyDao.read(createdId);
+
+        assertEquals("Triton", agencyUpdated.getName());
+        assertEquals(13, agencyUpdated.getDiscount());
+
+    }
+
     @AfterEach
     void tearDown() throws SQLException, ClassNotFoundException {
-        dao.delete(createdId);
+        agencyDao.delete(createdId);
+
+        if (testCif != null)
+            agencyDao.delete(agencyDao.findIdByCif(testCif));
     }
 
 }
