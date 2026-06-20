@@ -30,7 +30,7 @@ public class Main {
         AgencyDao agencyDao = new AgencyDao();
 
         Agency agency = new Agency("213", "adeu", "adeuuu", 24.5);
-        agencyDao.delete(agencyDao.getIdByCif(agency.getCif()));
+        agencyDao.delete(agencyDao.findIdByCif(agency.getCif()));
     }
 
     private static void testUpdateAgencyDao() throws SQLException, ClassNotFoundException {

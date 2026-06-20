@@ -120,7 +120,7 @@ public class AgencyDao implements CrudDao<Agency> {
         return agencies;
     }
 
-    public int getIdByCif(String cif) throws SQLException, ClassNotFoundException {
+    public int findIdByCif(String cif) throws SQLException, ClassNotFoundException {
         int id = -1;
 
         String sql = "SELECT id_agency FROM agencies WHERE cif = ?";
@@ -139,4 +139,31 @@ public class AgencyDao implements CrudDao<Agency> {
 
         return id;
     }
+
+    public Agency findByCif(String cif) throws SQLException, ClassNotFoundException {
+        Agency agency = null;
+
+        String sql = "SELECT * FROM agencies WHERE cif = ?";
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ) {
+            pstmt.setString(1, cif);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                agency = new Agency(
+                        rs.getInt("id_agency"),
+                        rs.getString("cif"),
+                        rs.getString("name"),
+                        rs.getString("affiliate_code"),
+                        rs.getDouble("discount")
+                );
+            }
+        }
+
+        return agency;
+    }
+
 }

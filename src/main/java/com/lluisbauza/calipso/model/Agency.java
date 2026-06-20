@@ -11,6 +11,8 @@ public class Agency {
         this.name = name;
         this.affiliateCode = affiliateCode;
         this.discount = discount;
+
+
     }
 
     public Agency(int idAgency, String cif, String name, String affiliateCode, double discount) {
