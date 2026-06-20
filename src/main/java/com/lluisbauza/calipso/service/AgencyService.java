@@ -4,7 +4,6 @@ import com.lluisbauza.calipso.dao.AgencyDao;
 import com.lluisbauza.calipso.model.Agency;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AgencyService {
@@ -14,6 +13,11 @@ public class AgencyService {
     public AgencyService() throws SQLException, ClassNotFoundException {
 
     }
+
+    /**
+     * Creates a new agency and generates a unique affiliate code.
+     * Affiliate codes cannot be modified after creation.
+     */
 
     public void createAgency(Agency agency) throws SQLException, ClassNotFoundException {
 

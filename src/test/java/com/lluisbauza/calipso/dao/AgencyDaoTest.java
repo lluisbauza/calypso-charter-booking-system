@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,6 +58,8 @@ public class AgencyDaoTest {
     @Test
     void update_shouldModifyInfo() throws SQLException, ClassNotFoundException {
 
+        Agency oldAgency = agencyDao.read(createdId);
+
         Agency agency = new Agency("x12345678", "Triton", "TRX876", 13);
 
         agencyDao.update(agency);
@@ -65,6 +68,39 @@ public class AgencyDaoTest {
 
         assertEquals("Triton", agencyUpdated.getName());
         assertEquals(13, agencyUpdated.getDiscount());
+        assertEquals(oldAgency.getAffiliateCode(), agencyUpdated.getAffiliateCode());
+
+    }
+
+    @Test
+    void delete_shouldRemoveAgency() throws SQLException, ClassNotFoundException{
+
+        Agency agency = agencyDao.read(createdId);
+
+        assertNotNull(agency);
+
+        agencyDao.delete(createdId);
+
+        Agency nullAgency = agencyDao.read(createdId);
+
+        assertNull(nullAgency);
+
+    }
+
+    @Test
+    void listAll_shouldCreateList() throws SQLException, ClassNotFoundException {
+        List<Agency> agencies = agencyDao.listAll();
+        boolean found = false;
+
+        for (Agency agency : agencies) {
+            if (agency.getCif().equals("x12345678")) {
+                found = true;
+                break;
+            }
+        }
+
+        assertTrue(found);
+        assertFalse(agencies.isEmpty());
 
     }
 
