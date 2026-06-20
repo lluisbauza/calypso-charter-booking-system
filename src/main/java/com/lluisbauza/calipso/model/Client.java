@@ -4,6 +4,12 @@ public class Client {
     private int idClient;
     private String mail, phone, name;
 
+    public Client(String mail, String phone, String name) {
+        this.mail = mail;
+        this.phone = phone;
+        this.name = name;
+    }
+
     public Client(int idClient, String mail, String phone, String name) {
         this.idClient = idClient;
         this.mail = mail;

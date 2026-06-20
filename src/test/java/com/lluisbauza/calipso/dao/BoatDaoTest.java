@@ -72,7 +72,7 @@ public class BoatDaoTest {
     }
 
     @Test
-    void delete_shouldRemoveBoat() throws SQLException, ClassNotFoundException{
+    void delete_shouldRemoveBoat() throws SQLException, ClassNotFoundException {
 
         Boat boat = boatDao.read(createdId);
 

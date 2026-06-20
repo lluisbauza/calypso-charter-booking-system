@@ -1,6 +1,5 @@
 package com.lluisbauza.calipso.dao;
 
-import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.Client;
 import com.lluisbauza.calipso.util.ConnectionManager;
 
@@ -13,7 +12,8 @@ import java.util.List;
 
 public class ClientDao implements CrudDao<Client> {
 
-    public ClientDao(){}
+    public ClientDao() {
+    }
 
     @Override
     public void create(Client client) throws SQLException, ClassNotFoundException {
@@ -23,7 +23,7 @@ public class ClientDao implements CrudDao<Client> {
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql);
-                ) {
+        ) {
             pstmt.setString(1, client.getMail());
             pstmt.setString(2, client.getPhone());
             pstmt.setString(3, client.getName());
@@ -41,12 +41,12 @@ public class ClientDao implements CrudDao<Client> {
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql);
-                ) {
+        ) {
             pstmt.setInt(1, id);
 
             ResultSet rs = pstmt.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 client = new Client(
                         rs.getInt("id_client"),
                         rs.getString("mail"),
@@ -67,11 +67,11 @@ public class ClientDao implements CrudDao<Client> {
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql)
-                ) {
+        ) {
             pstmt.setString(1, client.getMail());
-            pstmt.setString(2, client.getMail());
-            pstmt.setString(3, client.getMail());
-            pstmt.setString(4, client.getMail());
+            pstmt.setString(2, client.getPhone());
+            pstmt.setString(3, client.getName());
+            pstmt.setInt(4, client.getIdClient());
 
             pstmt.executeUpdate();
 
@@ -87,7 +87,7 @@ public class ClientDao implements CrudDao<Client> {
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql)
-                ) {
+        ) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         }
@@ -120,7 +120,7 @@ public class ClientDao implements CrudDao<Client> {
         return clients;
     }
 
-    public Client findByMail (String mail) throws SQLException, ClassNotFoundException {
+    public Client findByMail(String mail) throws SQLException, ClassNotFoundException {
 
         Client client = null;
 
@@ -134,7 +134,7 @@ public class ClientDao implements CrudDao<Client> {
 
             ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()){
+            if (rs.next()) {
                 client = new Client(
                         rs.getInt("id_client"),
                         rs.getString("mail"),
