@@ -4,10 +4,15 @@ public class Boat {
     private int idBoat, capacity;
     private String boatName;
 
-    public Boat(int idBoat, int capacity, String boatName) {
-        this.idBoat = idBoat;
-        this.capacity = capacity;
+    public Boat(String boatName, int capacity) {
         this.boatName = boatName;
+        this.capacity = capacity;
+    }
+
+    public Boat(int idBoat, String boatName, int capacity) {
+        this.idBoat = idBoat;
+        this.boatName = boatName;
+        this.capacity = capacity;
     }
 
     public int getIdBoat() {
