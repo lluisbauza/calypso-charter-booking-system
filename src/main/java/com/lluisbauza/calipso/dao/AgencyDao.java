@@ -83,6 +83,7 @@ public class AgencyDao implements CrudDao<Agency> {
 
     @Override
     public void delete(int id) throws SQLException, ClassNotFoundException {
+
         String sql = "DELETE FROM agencies WHERE id_agency = ?";
 
         try (
@@ -97,8 +98,8 @@ public class AgencyDao implements CrudDao<Agency> {
 
     @Override
     public List<Agency> listAll() throws SQLException, ClassNotFoundException {
-        List<Agency> agencies = new ArrayList<>();
 
+        List<Agency> agencies = new ArrayList<>();
         String sql = "SELECT * FROM agencies";
 
         try (
@@ -119,6 +120,7 @@ public class AgencyDao implements CrudDao<Agency> {
             }
         }
         return agencies;
+
     }
 
     public int findIdByCif(String cif) throws SQLException, ClassNotFoundException {
