@@ -49,7 +49,7 @@ CREATE TABLE trip_types (
 	id_trip_type INT PRIMARY KEY AUTO_INCREMENT,
     id_boat INT NOT NULL,
     trip_option VARCHAR(15) NOT NULL,
-    duration_hours INT NOT NULL,
+    duration_minutes INT NOT NULL,
     departure_time TIME NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id_boat) REFERENCES boats (id_boat)

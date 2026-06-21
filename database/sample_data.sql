@@ -41,14 +41,14 @@ VALUES
 -- trip_types
 INSERT INTO trip_types (id_boat, trip_option, duration_hours, departure_time, price)
 VALUES
-(1, 'Morning', 4, '10:00:00', 650.00),
-(1, 'Afternoon', 3, '16:00:00', 525.00),
-(1, 'Sunset', 2, '19:00:00', 375.00),
-(2, 'Morning', 4, '10:00:00', 450.00),
-(2, 'Afternoon', 3, '16:00:00', 325.00),
-(2, 'Sunset', 2, '19:00:00', 275.00),
-(3, 'Morning', 6, '10:00:00', 950.00),
-(3, 'Afternoon', 4, '16:00:00', 690.00);
+(1, 'Morning', 240, '10:00:00', 650.00),
+(1, 'Afternoon', 180, '16:00:00', 525.00),
+(1, 'Sunset', 150, '19:00:00', 375.00),
+(2, 'Morning', 240, '10:00:00', 450.00),
+(2, 'Afternoon', 180, '16:00:00', 325.00),
+(2, 'Sunset', 150, '19:00:00', 275.00),
+(3, 'Morning', 360, '10:00:00', 950.00),
+(3, 'Afternoon', 240, '16:00:00', 690.00);
 
 -- users
 INSERT INTO users (

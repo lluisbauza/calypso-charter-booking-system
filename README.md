@@ -18,10 +18,13 @@ Boat Charter Booking System developed in Java, Swing and MySQL.
 - JDBC
 - Git
 
-## Current Status
+## Current Status 
 
+- Start Date: June 14th 2026
 - Database design completed
 - Initial schema created
+- Model classes implemented
+- DAO classes and JUnit test WIP. 
 
 ## Run the app
 1. Run schema.sql

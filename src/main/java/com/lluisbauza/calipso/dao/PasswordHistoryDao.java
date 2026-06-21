@@ -18,6 +18,7 @@ public class PasswordHistoryDao implements CrudDao<PasswordHistory> {
 
     @Override
     public void create(PasswordHistory passwordHistory) throws SQLException, ClassNotFoundException {
+
         String sql = "INSERT INTO password_history (id_user, password_hash) values (?, ?)";
 
         try (
@@ -132,6 +133,7 @@ public class PasswordHistoryDao implements CrudDao<PasswordHistory> {
             }
         }
         return passwordHistories;
+
     }
 
     public List<PasswordHistory> findByUserId(int idUser) throws SQLException, ClassNotFoundException {

@@ -1,18 +1,22 @@
 package com.lluisbauza.calipso.model;
 
+import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalTime;
 
 public class TripType {
     private int idTripType;
     private Boat boat;
     private String tripOption;
+    private Duration duration;
     private LocalTime departureTime;
     private double price;
 
-    public TripType(int idTripType, Boat boat, String tripOption, LocalTime departureTime, double price) {
+    public TripType(int idTripType, Boat boat, String tripOption, Duration duration, LocalTime departureTime, double price) {
         this.idTripType = idTripType;
         this.boat = boat;
         this.tripOption = tripOption;
+        this.duration = duration;
         this.departureTime = departureTime;
         this.price = price;
     }
@@ -41,6 +45,14 @@ public class TripType {
         this.tripOption = tripOption;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
     public LocalTime getDepartureTime() {
         return departureTime;
     }
@@ -63,6 +75,7 @@ public class TripType {
                 "idTripType=" + idTripType +
                 ", boat=" + boat +
                 ", tripOption='" + tripOption + '\'' +
+                ", duration=" + duration +
                 ", departureTime=" + departureTime +
                 ", price=" + price +
                 '}';
