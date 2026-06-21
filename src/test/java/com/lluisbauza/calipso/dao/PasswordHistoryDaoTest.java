@@ -73,8 +73,6 @@ public class PasswordHistoryDaoTest {
 
         PasswordHistory oldPasswordHistory = passwordHistoryDao.read(createdId);
 
-        String oldPassword = oldPasswordHistory.getPasswordHash();
-
         oldPasswordHistory.setPasswordHash("6789poert");
 
         passwordHistoryDao.update(oldPasswordHistory);
