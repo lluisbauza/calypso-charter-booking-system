@@ -84,6 +84,7 @@ CREATE TABLE reservations (
     final_price DECIMAL(10,2) NOT NULL,
     id_agency INT,
     observations VARCHAR(255),
+    reservation_status ENUM('PENDING','CONFIRMED','CANCELLED', 'COMPLETED', 'REFUNDED', 'NO_SHOW'), 
     FOREIGN KEY (id_client) REFERENCES clients (id_client),
 	FOREIGN KEY (id_trip_type) REFERENCES trip_types (id_trip_type),
 	FOREIGN KEY (id_agency) REFERENCES agencies (id_agency)

@@ -11,9 +11,11 @@ public class Reservation {
     private boolean allergies;
     private double finalPrice;
     private Agency agency;
+    private ReservationStatus reservationStatus;
 
     public Reservation(int idReservation, int pax, String reservationCode, String observations, Client client,
-                       TripType tripType, LocalDate reservationDate, boolean allergies, double finalPrice, Agency agency) {
+                       TripType tripType, LocalDate reservationDate, boolean allergies, double finalPrice,
+                       Agency agency, ReservationStatus reservationStatus) {
         this.idReservation = idReservation;
         this.pax = pax;
         this.reservationCode = reservationCode;
@@ -24,6 +26,7 @@ public class Reservation {
         this.allergies = allergies;
         this.finalPrice = finalPrice;
         this.agency = agency;
+        this.reservationStatus = reservationStatus;
     }
 
     public int getIdReservation() {
@@ -106,6 +109,14 @@ public class Reservation {
         this.agency = agency;
     }
 
+    public ReservationStatus getReservationStatus() {
+        return reservationStatus;
+    }
+
+    public void setReservationStatus(ReservationStatus reservationStatus) {
+        this.reservationStatus = reservationStatus;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
@@ -119,6 +130,7 @@ public class Reservation {
                 ", allergies=" + allergies +
                 ", finalPrice=" + finalPrice +
                 ", agency=" + agency +
+                ", reservationStatus=" + reservationStatus +
                 '}';
     }
 }
