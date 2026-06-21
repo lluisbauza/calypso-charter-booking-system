@@ -6,6 +6,19 @@ public class User {
     private boolean mustChangePassword;
     private String currentPasswordHash, securityAnswer;
 
+    public User(int idSecurityQuestion, String username, String firstName, String lastName1, String lastName2,
+                String mail, boolean mustChangePassword, String currentPasswordHash, String securityAnswer) {
+        this.idSecurityQuestion = idSecurityQuestion;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName1 = lastName1;
+        this.lastName2 = lastName2;
+        this.mail = mail;
+        this.mustChangePassword = mustChangePassword;
+        this.currentPasswordHash = currentPasswordHash;
+        this.securityAnswer = securityAnswer;
+    }
+
     public User(int idUser, int idSecurityQuestion, String username, String firstName, String lastName1, String lastName2,
                 String mail, boolean mustChangePassword, String currentPasswordHash, String securityAnswer) {
         this.idUser = idUser;

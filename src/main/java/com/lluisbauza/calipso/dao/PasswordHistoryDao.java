@@ -1,6 +1,5 @@
 package com.lluisbauza.calipso.dao;
 
-import com.lluisbauza.calipso.model.Agency;
 import com.lluisbauza.calipso.model.PasswordHistory;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.util.ConnectionManager;
@@ -167,5 +166,59 @@ public class PasswordHistoryDao implements CrudDao<PasswordHistory> {
         }
         return userPasswordList;
     }
+
+    public int findIdByPassword(String password) throws SQLException, ClassNotFoundException {
+        int id = -1;
+
+        String sql = "SELECT id_password_history FROM password_history WHERE password_hash = ?";
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ) {
+            pstmt.setString(1, password);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                id = rs.getInt("id_password_history");
+            }
+        }
+
+        return id;
+    }
+
+    public PasswordHistory findByPassword(String password) throws SQLException, ClassNotFoundException {
+
+        PasswordHistory passwordHistory = null;
+        UserDao userDao = new UserDao();
+
+        String sql = "SELECT * FROM password_history WHERE password_hash = ?";
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ) {
+            pstmt.setString(1, password);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                User user = userDao.read(rs.getInt("id_user"));
+
+                if (user == null) {
+                    throw new IllegalStateException("User does not exist.");
+                }
+
+                passwordHistory = new PasswordHistory(
+                        rs.getInt("id_password_history"),
+                        user,
+                        rs.getString("password_hash")
+                );
+            }
+        }
+
+        return passwordHistory;
+    }
+
+
 
 }

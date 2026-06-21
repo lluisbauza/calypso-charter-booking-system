@@ -5,6 +5,11 @@ public class PasswordHistory {
     private User user;
     private String passwordHash;
 
+    public PasswordHistory(User user, String passwordHash) {
+        this.user = user;
+        this.passwordHash = passwordHash;
+    }
+
     public PasswordHistory(int idPasswordHistory, User user, String passwordHash) {
         this.idPasswordHistory = idPasswordHistory;
         this.user = user;
