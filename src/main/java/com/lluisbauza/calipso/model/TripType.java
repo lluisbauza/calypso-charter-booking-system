@@ -12,6 +12,14 @@ public class TripType {
     private LocalTime departureTime;
     private double price;
 
+    public TripType(Boat boat, String tripOption, Duration duration, LocalTime departureTime, double price) {
+        this.boat = boat;
+        this.tripOption = tripOption;
+        this.duration = duration;
+        this.departureTime = departureTime;
+        this.price = price;
+    }
+
     public TripType(int idTripType, Boat boat, String tripOption, Duration duration, LocalTime departureTime, double price) {
         this.idTripType = idTripType;
         this.boat = boat;
