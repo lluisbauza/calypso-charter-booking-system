@@ -13,6 +13,21 @@ public class Reservation {
     private Agency agency;
     private ReservationStatus reservationStatus;
 
+    public Reservation(int pax, String reservationCode, String observations, Client client, TripType tripType,
+                       LocalDate reservationDate, boolean allergies, double finalPrice, Agency agency,
+                       ReservationStatus reservationStatus) {
+        this.pax = pax;
+        this.reservationCode = reservationCode;
+        this.observations = observations;
+        this.client = client;
+        this.tripType = tripType;
+        this.reservationDate = reservationDate;
+        this.allergies = allergies;
+        this.finalPrice = finalPrice;
+        this.agency = agency;
+        this.reservationStatus = reservationStatus;
+    }
+
     public Reservation(int idReservation, int pax, String reservationCode, String observations, Client client,
                        TripType tripType, LocalDate reservationDate, boolean allergies, double finalPrice,
                        Agency agency, ReservationStatus reservationStatus) {

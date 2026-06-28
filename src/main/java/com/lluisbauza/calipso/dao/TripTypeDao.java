@@ -17,7 +17,8 @@ public class TripTypeDao implements CrudDao<TripType> {
     @Override
     public void create(TripType tripType) throws SQLException, ClassNotFoundException {
 
-        String sql = "INSERT INTO trip_types (id_boat, trip_option, duration_minutes, departure_time, price) values (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO trip_types (id_boat, trip_option, duration_minutes, departure_time, price) " +
+                "values (?, ?, ?, ?, ?)";
 
         try (
                 Connection con = ConnectionManager.getCon();
