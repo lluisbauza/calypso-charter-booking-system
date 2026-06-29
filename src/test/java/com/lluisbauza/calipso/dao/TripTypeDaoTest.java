@@ -53,11 +53,6 @@ public class TripTypeDaoTest {
         if (boatDao.read(createdBoatId) != null) {
             boatDao.delete(createdBoatId);
         }
-
-//        if (boatDao.findByName("Anfitrite") != null) {
-//            boatDao.delete(boatDao.findByName("Anfitrite").getIdBoat());
-//        }
-
     }
 
     @Test
