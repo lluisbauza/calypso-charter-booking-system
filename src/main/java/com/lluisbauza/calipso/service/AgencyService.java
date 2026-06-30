@@ -11,7 +11,6 @@ public class AgencyService {
     private AgencyDao agencyDao = new AgencyDao();
 
     public AgencyService() throws SQLException, ClassNotFoundException {
-
     }
 
     /**

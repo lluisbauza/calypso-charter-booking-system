@@ -20,10 +20,12 @@ public class ReservationDaoTest {
     private BoatDao boatDao;
     private TripTypeDao tripTypeDao;
 
-    int idAgency;
-    int idClient;
-    int idBoat;
-    int idTripType;
+    private int idAgency;
+    private int idClient;
+    private int idBoat;
+    private int idTripType;
+
+    private String reservationCode;
 
 
     @BeforeEach
@@ -78,4 +80,10 @@ public class ReservationDaoTest {
         }
 
     }
+
+    void create_shouldInsertRecord() throws SQLException, ClassNotFoundException {
+
+
+    }
+
 }
