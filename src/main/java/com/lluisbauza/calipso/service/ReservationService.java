@@ -26,8 +26,6 @@ public class ReservationService {
 
         int counter = 1;
 
-        
-
         String reservationCode = reservation.getTripType().getBoat().getBoatName().substring(0, 2).toUpperCase() + "-"
                 + reservation.getReservationDate().getYear()
                 + reservation.getReservationDate().getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).substring(0, 3).toUpperCase()

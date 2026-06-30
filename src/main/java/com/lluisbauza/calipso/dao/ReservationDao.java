@@ -551,7 +551,8 @@ public class ReservationDao implements CrudDao<Reservation> {
 
         int reservedSeats = 0;
 
-        String sql = "SELECT sum(pax) AS reserved_seats FROM reservations WHERE id_trip_type = ? AND reservation_date = ?";
+        String sql = "SELECT sum(pax) AS reserved_seats FROM reservations WHERE id_trip_type = ? AND reservation_date = ?" +
+                "AND reservation_status NOT IN ('CANCELLED', 'REFUNDED')";
 
         try (
                 Connection con = ConnectionManager.getCon();
