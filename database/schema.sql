@@ -89,3 +89,23 @@ CREATE TABLE reservations (
 	FOREIGN KEY (id_trip_type) REFERENCES trip_types (id_trip_type),
 	FOREIGN KEY (id_agency) REFERENCES agencies (id_agency)
 );
+
+-- 9- agency users
+CREATE TABLE agency_users (
+	id_agency_user INT PRIMARY KEY AUTO_INCREMENT,
+    id_agency INT NOT NULL,
+	name VARCHAR(50) NOT NULL,
+    mail VARCHAR(100) NOT NULL UNIQUE,
+	password_hash VARCHAR(255) NOT NULL,
+	active BOOLEAN NOT NULL DEFAULT TRUE,
+	FOREIGN KEY (id_agency) REFERENCES agencies (id_agency)
+);
+
+-- 10- agency_password_history table
+CREATE TABLE agency_password_history (
+	id_agency_password_history INT PRIMARY KEY AUTO_INCREMENT,
+    id_agency_user INT NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    FOREIGN KEY (id_agency_user) REFERENCES agency_users (id_agency_user),
+    UNIQUE (id_agency_user, password_hash)
+);
