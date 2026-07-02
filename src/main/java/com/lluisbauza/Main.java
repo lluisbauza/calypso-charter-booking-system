@@ -5,16 +5,21 @@ import com.lluisbauza.calipso.model.SecurityQuestion;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.service.UserService;
 import com.lluisbauza.calipso.util.Input;
+import com.lluisbauza.calipso.util.PasswordFileGenerator;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+
+    private static UserService userService;
+
     public static void main(String[] args) throws Exception, SQLException, ClassNotFoundException {
 //        AgencyService agencyService = new AgencyService();
 //        Agency agency = new Agency("W56789345", "Venganza", 10);
 //        agencyService.createAgency(agency);
+        userService = new UserService();
 
         int option;
         do {
@@ -58,8 +63,6 @@ public class Main {
 
     public static void introduceMail() throws Exception {
 
-        UserService userService = new UserService();
-
         String mail = Input.askString("Mail: ");
 
         if (userService.userExistsByMail(mail)){
@@ -67,9 +70,18 @@ public class Main {
             String password = Input.askString("Password: ");
 
             if (userService.login(mail, password)) {
-                System.out.println("LOGIN SUCCESSFUL.");
+                System.out.println("CORRECT CREDENTIALS.");
+
+                if (userService.checkPasswordNeedsChange(mail)) {
+                    askNewPassword(mail);
+                } else {
+                    System.out.println("WELCOME");
+                }
+
             } else {
                 System.out.println("Incorrect password.");
+                System.out.println("Reset password.");
+                resetPassword(mail);
             }
 
         } else {
@@ -80,8 +92,6 @@ public class Main {
     }
 
     public static void register(String mail) throws Exception {
-
-        UserService userService = new UserService();
 
         SecurityQuestionDao securityQuestionDao = new SecurityQuestionDao();
         List<SecurityQuestion> securityQuestions = securityQuestionDao.listAll();
@@ -106,12 +116,62 @@ public class Main {
         User user = new User (securityQuestion.getIdSecurityQuestion(), username, firstName,
                 lastName1, lastName2, mail, securityAnswer);
 
-        userService.registerUser(user);
+        String tempPassword = userService.registerUser(user);
 
+        generateTempPasswordFile(user, tempPassword);
 
     }
 
+    public static void generateTempPasswordFile(User user, String tempPassword) throws IOException {
 
+        try {
+            PasswordFileGenerator.generatePasswordFile(user, tempPassword);
 
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public static void resetPassword(String mail) throws Exception {
+
+        String question = userService.getQuestionByMail(mail);
+        System.out.println(question);
+        String answer = Input.askString("What's the answer? ");
+
+        if (userService.confirmAnswer(mail, answer)) {
+            askNewPassword(mail);
+        }
+
+    }
+
+    public static void askNewPassword(String mail) throws Exception {
+
+        String password = null, newPasswordConfirm;
+        boolean unique = false, equal = false;
+
+        while (!unique) {
+
+            password = Input.askString("Introduce a new password: ");
+
+            if (userService.isPasswordNew(mail, password)) {
+                unique = true;
+            } else {
+                System.out.println("You can't use a password you've used in the past.");
+            }
+
+        }
+
+        while (!equal) {
+            newPasswordConfirm = Input.askString("Type it again: ");
+            if (password.equals(newPasswordConfirm)) {
+                userService.updatePassword(mail, password);
+                equal = true;
+            } else {
+                System.out.println("The passwords do not match.");
+            }
+
+        }
+    }
 
 }

@@ -1,12 +1,9 @@
 package com.lluisbauza.calipso.dao;
 
-import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.SecurityQuestion;
-import com.lluisbauza.calipso.model.TripType;
 import com.lluisbauza.calipso.util.ConnectionManager;
 
 import java.sql.*;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 

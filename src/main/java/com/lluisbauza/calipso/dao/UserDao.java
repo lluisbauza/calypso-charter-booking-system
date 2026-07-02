@@ -4,10 +4,7 @@ import com.lluisbauza.calipso.model.Agency;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.util.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +21,7 @@ public class UserDao implements CrudDao<User> {
 
         try (
                 Connection con = ConnectionManager.getCon();
-                PreparedStatement pstmt = con.prepareStatement(sql);
+                PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ) {
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName1());
@@ -36,6 +33,13 @@ public class UserDao implements CrudDao<User> {
             pstmt.setString(8, user.getUsername());
 
             pstmt.executeUpdate();
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    user.setIdUser(rs.getInt(1));
+                }
+            }
+
         }
 
     }
@@ -180,5 +184,24 @@ public class UserDao implements CrudDao<User> {
 
         return user;
     }
+
+    public void updatePassword(User user) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE users SET must_change_password = ?, current_password_hash = ?  WHERE id_user = ?";
+
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql);
+        ) {
+
+            pstmt.setBoolean(1, user.isMustChangePassword());
+            pstmt.setString(2, user.getCurrentPasswordHash());
+            pstmt.setInt(3, user.getIdUser());
+
+            pstmt.executeUpdate();
+
+        }
+    }
+
 
 }
