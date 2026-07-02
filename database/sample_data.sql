@@ -39,7 +39,7 @@ VALUES
 ('marco.rossi@gmail.com', '393401234567', 'Marco Rossi');
 
 -- trip_types
-INSERT INTO trip_types (id_boat, trip_option, duration_hours, departure_time, price)
+INSERT INTO trip_types (id_boat, trip_option, duration_minutes, departure_time, price)
 VALUES
 (1, 'Morning', 240, '10:00:00', 650.00),
 (1, 'Afternoon', 180, '16:00:00', 525.00),
@@ -148,63 +148,83 @@ INSERT INTO reservations (
     allergies,
     final_price,
     id_agency,
-    observations
+    observations,
+    reservation_status
 )
 VALUES
 (
     'RES-2026-001',
     1,
-    13,
+    1,
     '2026-07-15',
     4,
     FALSE,
     650.00,
     1,
-    'Family with two children.'
+    'Family with two children.',
+    'CONFIRMED'
 ),
 (
     'RES-2026-002',
     2,
-    12,
+    3,
     '2026-07-18',
     2,
     TRUE,
     375.00,
     2,
-    'One passenger allergic to nuts.'
+    'One passenger allergic to nuts.',
+    'CONFIRMED'
 ),
 (
     'RES-2026-003',
     3,
-    11,
+    5,
     '2026-07-20',
     6,
     FALSE,
     325.00,
     3,
-    'Celebrating a birthday.'
+    'Celebrating a birthday.',
+    'PENDING'
 ),
 (
     'RES-2026-004',
     4,
-    10,
+    2,
     '2026-07-22',
     3,
     FALSE,
     525.00,
     1,
-    'Requested swimming stop.'
+    'Requested swimming stop.',
+    'CONFIRMED'
 ),
 (
     'RES-2026-005',
     1,
-    9,
+    7,
     '2026-07-25',
     8,
     TRUE,
     950.00,
     4,
-    'Two passengers allergic to shellfish.'
+    'Two passengers allergic to shellfish.',
+    'PENDING'
 );
 
+-- agency_users
+INSERT INTO agency_users (id_agency, name, mail, password_hash, active)
+VALUES
+(1, 'Sarah Johnson', 'sarah.johnson@poseidontravel.com', '$2a$10$hashSarah', TRUE),
+(2, 'Thomas Weber', 'thomas.weber@nereustours.de', '$2a$10$hashThomas', TRUE),
+(3, 'Claire Martin', 'claire.martin@mediterranee.fr', '$2a$10$hashClaire', TRUE),
+(4, 'Luca Bianchi', 'luca.bianchi@solemare.it', '$2a$10$hashLuca', TRUE);
 
+-- agency_password_history
+INSERT INTO agency_password_history (id_agency_user, password_hash)
+VALUES
+(1, '$2a$10$hashSarah'),
+(2, '$2a$10$hashThomas'),
+(3, '$2a$10$hashClaire'),
+(4, '$2a$10$hashLuca');

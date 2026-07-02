@@ -69,7 +69,7 @@ public class SecurityQuestionDao implements CrudDao<SecurityQuestion>{
         ) {
 
             pstmt.setString(1, securityQuestion.getSecurityQuestion());
-            pstmt.setInt(1, securityQuestion.getIdSecurityQuestion());
+            pstmt.setInt(2, securityQuestion.getIdSecurityQuestion());
 
             pstmt.executeUpdate();
 

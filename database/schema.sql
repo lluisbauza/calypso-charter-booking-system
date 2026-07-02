@@ -19,7 +19,7 @@ CREATE TABLE users (
     first_name VARCHAR(25) NOT NULL ,
     last_name_1 VARCHAR(25) NOT NULL,
 	last_name_2 VARCHAR(25),
-    must_change_password boolean NOT NULL,
+    must_change_password BOOLEAN NOT NULL DEFAULT TRUE,
     current_password_hash VARCHAR (255) NOT NULL,
 	id_security_question INT NOT NULL,
     security_answer VARCHAR(50) NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE reservations (
     final_price DECIMAL(10,2) NOT NULL,
     id_agency INT,
     observations VARCHAR(255),
-    reservation_status ENUM('PENDING','CONFIRMED','CANCELLED', 'COMPLETED', 'REFUNDED', 'NO_SHOW'), 
+    reservation_status ENUM('PENDING','CONFIRMED','CANCELLED', 'COMPLETED', 'REFUNDED', 'NO_SHOW') NOT NULL, 
     FOREIGN KEY (id_client) REFERENCES clients (id_client),
 	FOREIGN KEY (id_trip_type) REFERENCES trip_types (id_trip_type),
 	FOREIGN KEY (id_agency) REFERENCES agencies (id_agency)

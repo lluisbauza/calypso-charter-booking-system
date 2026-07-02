@@ -19,8 +19,8 @@ public class UserDao implements CrudDao<User> {
     @Override
     public void create(User user) throws SQLException, ClassNotFoundException {
 
-        String sql = "INSERT INTO users (first_name, last_name_1, last_name_2, must_change_password, current_password_hash, " +
-                "id_security_question, security_answer, mail, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (first_name, last_name_1, last_name_2, current_password_hash, " +
+                "id_security_question, security_answer, mail, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (
                 Connection con = ConnectionManager.getCon();
@@ -29,12 +29,11 @@ public class UserDao implements CrudDao<User> {
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName1());
             pstmt.setString(3, user.getLastName2());
-            pstmt.setBoolean(4, user.isMustChangePassword());
-            pstmt.setString(5, user.getCurrentPasswordHash());
-            pstmt.setInt(6, user.getIdSecurityQuestion());
-            pstmt.setString(7, user.getSecurityAnswer());
-            pstmt.setString(8, user.getMail());
-            pstmt.setString(9, user.getUsername());
+            pstmt.setString(4, user.getCurrentPasswordHash());
+            pstmt.setInt(5, user.getIdSecurityQuestion());
+            pstmt.setString(6, user.getSecurityAnswer());
+            pstmt.setString(7, user.getMail());
+            pstmt.setString(8, user.getUsername());
 
             pstmt.executeUpdate();
         }

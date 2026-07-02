@@ -21,7 +21,7 @@ class UserDaoTest {
         userDao = new UserDao();
 
         User user = new User(1, "psky", "Pancho", "Sky", "",
-                "pancho.sky@email.com", true, "$2a$10$hash6", "Loki");
+                "pancho.sky@email.com", "$2a$10$hash6", "Loki");
 
         userDao.create(user);
         createdId = userDao.findByMail("pancho.sky@email.com").getIdUser();
@@ -44,7 +44,7 @@ class UserDaoTest {
         testMail = "ruisu.takeshi@mail.com";
 
         User user = new User(2, "rtak", "Ruisu", "Takeshi", "",
-                testMail, true, "$2a$10$hash6", "Tokio");
+                testMail, "$2a$10$hash6", "Tokio");
         userDao.create(user);
 
         User createdUser = userDao.findByMail(testMail);
@@ -76,7 +76,6 @@ class UserDaoTest {
         oldUser.setLastName1("Takeshi");
         oldUser.setLastName2("");
         oldUser.setMail("ruisu.takeshi@mail.com");
-        oldUser.setMustChangePassword(true);
         oldUser.setCurrentPasswordHash("$2a$10$hash6");
         oldUser.setSecurityAnswer("Taca");
 
