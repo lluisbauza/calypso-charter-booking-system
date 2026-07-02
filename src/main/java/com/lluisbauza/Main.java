@@ -147,31 +147,36 @@ public class Main {
 
     public static void askNewPassword(String mail) throws Exception {
 
-        String password = null, newPasswordConfirm;
-        boolean unique = false, equal = false;
+        String password, newPasswordConfirm;
+        boolean success = false;
 
-        while (!unique) {
+        while (!success) {
 
             password = Input.askString("Introduce a new password: ");
 
-            if (userService.isPasswordNew(mail, password)) {
-                unique = true;
-            } else {
-                System.out.println("You can't use a password you've used in the past.");
+            try {
+                userService.isPasswordValid(password);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                continue;
             }
 
-        }
+            if (!userService.isPasswordNew(mail, password)) {
+                System.out.println("You can't use a password you've used in the past.");
+                continue;
+            }
 
-        while (!equal) {
             newPasswordConfirm = Input.askString("Type it again: ");
             if (password.equals(newPasswordConfirm)) {
                 userService.updatePassword(mail, password);
-                equal = true;
+                System.out.println("Password changed");
+                success = true;
             } else {
                 System.out.println("The passwords do not match.");
             }
 
         }
+
     }
 
 }

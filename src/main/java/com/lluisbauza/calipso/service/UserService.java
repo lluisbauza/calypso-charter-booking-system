@@ -12,6 +12,8 @@ import java.util.List;
 import com.lluisbauza.calipso.util.PasswordGenerator;
 import org.mindrot.jbcrypt.BCrypt;
 
+import static java.lang.Character.*;
+
 public class UserService {
 
     private UserDao userDao = new UserDao();
@@ -110,4 +112,43 @@ public class UserService {
 
     }
 
+    public boolean isPasswordValid(String password) throws Exception {
+
+        boolean longEnough = false;
+        boolean hasLowerCase = false;
+        boolean hasUpperCase = false;
+        boolean hasNumber = false;
+
+        if (password.length() >= 10) {
+            longEnough = true;
+        }
+
+        for (int i = 0, length = password.length(); i < length; i++) {
+
+            if (!hasLowerCase)
+                hasLowerCase = isLowerCase(password.charAt(i));
+
+            if (!hasUpperCase)
+                hasUpperCase = isUpperCase(password.charAt(i));
+
+            if (!hasNumber)
+                hasNumber = isDigit(password.charAt(i));
+
+        }
+
+        if (!longEnough)
+            throw new Exception("The password must have at least 10 characters.");
+
+        if (!hasLowerCase)
+            throw new Exception("The password must have at least an lowercase letter");
+
+        if (!hasUpperCase)
+            throw new Exception("The password must have at least an uppercase letter");
+
+        if (!hasNumber)
+            throw new Exception("The password must have at least a number");
+
+        return longEnough && hasLowerCase && hasUpperCase && hasNumber;
+
+    }
 }
