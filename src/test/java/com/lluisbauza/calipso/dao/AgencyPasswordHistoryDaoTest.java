@@ -51,6 +51,27 @@ public class AgencyPasswordHistoryDaoTest {
         createdId = agencyPasswordHistoryDao.findIdByPassword("agencyPasswordTest1234");
     }
 
+    @AfterEach
+    void tearDown() throws SQLException, ClassNotFoundException {
+        if (agencyPasswordHistoryDao.read(createdId) != null) {
+            agencyPasswordHistoryDao.delete(createdId);
+        }
+
+        if (testPassword != null && agencyPasswordHistoryDao.findByPassword(testPassword) != null) {
+            agencyPasswordHistoryDao.delete(
+                    agencyPasswordHistoryDao.findByPassword(testPassword).getIdAgencyPasswordHistory()
+            );
+        }
+
+        if (agencyUserDao.read(createdAgencyUserId) != null) {
+            agencyUserDao.delete(createdAgencyUserId);
+        }
+
+        if (agencyDao.read(createdAgencyId) != null) {
+            agencyDao.delete(createdAgencyId);
+        }
+    }
+
     @Test
     void create_shouldInsertRecord() throws SQLException, ClassNotFoundException {
         testPassword = "agencyPassword5678";
@@ -141,24 +162,4 @@ public class AgencyPasswordHistoryDaoTest {
         assertFalse(agencyPasswordHistories.isEmpty());
     }
 
-    @AfterEach
-    void tearDown() throws SQLException, ClassNotFoundException {
-        if (agencyPasswordHistoryDao.read(createdId) != null) {
-            agencyPasswordHistoryDao.delete(createdId);
-        }
-
-        if (testPassword != null && agencyPasswordHistoryDao.findByPassword(testPassword) != null) {
-            agencyPasswordHistoryDao.delete(
-                    agencyPasswordHistoryDao.findByPassword(testPassword).getIdAgencyPasswordHistory()
-            );
-        }
-
-        if (agencyUserDao.read(createdAgencyUserId) != null) {
-            agencyUserDao.delete(createdAgencyUserId);
-        }
-
-        if (agencyDao.read(createdAgencyId) != null) {
-            agencyDao.delete(createdAgencyId);
-        }
-    }
 }

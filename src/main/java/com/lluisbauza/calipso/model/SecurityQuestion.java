@@ -4,6 +4,10 @@ public class SecurityQuestion {
     private int idSecurityQuestion;
     private String securityQuestion;
 
+    public SecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
     public SecurityQuestion(int idSecurityQuestion, String securityQuestion) {
         this.idSecurityQuestion = idSecurityQuestion;
         this.securityQuestion = securityQuestion;

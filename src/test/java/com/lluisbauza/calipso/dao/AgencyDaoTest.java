@@ -23,6 +23,14 @@ public class AgencyDaoTest {
         createdId = agencyDao.findIdByCif("x12345678");
     }
 
+    @AfterEach
+    void tearDown() throws SQLException, ClassNotFoundException {
+        agencyDao.delete(createdId);
+
+        if (testCif != null)
+            agencyDao.delete(agencyDao.findIdByCif(testCif));
+    }
+
     @Test
     void create_shouldInsertRecord() throws SQLException, ClassNotFoundException {
 
@@ -108,14 +116,6 @@ public class AgencyDaoTest {
         assertTrue(found);
         assertFalse(agencies.isEmpty());
 
-    }
-
-    @AfterEach
-    void tearDown() throws SQLException, ClassNotFoundException {
-        agencyDao.delete(createdId);
-
-        if (testCif != null)
-            agencyDao.delete(agencyDao.findIdByCif(testCif));
     }
 
 }

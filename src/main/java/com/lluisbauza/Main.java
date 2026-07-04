@@ -16,9 +16,7 @@ public class Main {
     private static UserService userService;
 
     public static void main(String[] args) throws Exception, SQLException, ClassNotFoundException {
-//        AgencyService agencyService = new AgencyService();
-//        Agency agency = new Agency("W56789345", "Venganza", 10);
-//        agencyService.createAgency(agency);
+
         userService = new UserService();
 
         int option;
@@ -91,6 +89,52 @@ public class Main {
 
     }
 
+    public static void askNewPassword(String mail) throws Exception {
+
+        String password, newPasswordConfirm;
+        boolean success = false;
+
+        while (!success) {
+
+            password = Input.askString("Introduce a new password: ");
+
+            try {
+                userService.isPasswordValid(password);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                continue;
+            }
+
+            if (!userService.isPasswordNew(mail, password)) {
+                System.out.println("You can't use a password you've used in the past.");
+                continue;
+            }
+
+            newPasswordConfirm = Input.askString("Type it again: ");
+            if (password.equals(newPasswordConfirm)) {
+                userService.updatePassword(mail, password);
+                System.out.println("Password changed");
+                success = true;
+            } else {
+                System.out.println("The passwords do not match.");
+            }
+
+        }
+
+    }
+
+    public static void resetPassword(String mail) throws Exception {
+
+        String question = userService.getQuestionByMail(mail);
+        System.out.println(question);
+        String answer = Input.askString("What's the answer? ");
+
+        if (userService.confirmAnswer(mail, answer)) {
+            askNewPassword(mail);
+        }
+
+    }
+
     public static void register(String mail) throws Exception {
 
         SecurityQuestionDao securityQuestionDao = new SecurityQuestionDao();
@@ -133,50 +177,5 @@ public class Main {
 
     }
 
-    public static void resetPassword(String mail) throws Exception {
-
-        String question = userService.getQuestionByMail(mail);
-        System.out.println(question);
-        String answer = Input.askString("What's the answer? ");
-
-        if (userService.confirmAnswer(mail, answer)) {
-            askNewPassword(mail);
-        }
-
-    }
-
-    public static void askNewPassword(String mail) throws Exception {
-
-        String password, newPasswordConfirm;
-        boolean success = false;
-
-        while (!success) {
-
-            password = Input.askString("Introduce a new password: ");
-
-            try {
-                userService.isPasswordValid(password);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                continue;
-            }
-
-            if (!userService.isPasswordNew(mail, password)) {
-                System.out.println("You can't use a password you've used in the past.");
-                continue;
-            }
-
-            newPasswordConfirm = Input.askString("Type it again: ");
-            if (password.equals(newPasswordConfirm)) {
-                userService.updatePassword(mail, password);
-                System.out.println("Password changed");
-                success = true;
-            } else {
-                System.out.println("The passwords do not match.");
-            }
-
-        }
-
-    }
 
 }

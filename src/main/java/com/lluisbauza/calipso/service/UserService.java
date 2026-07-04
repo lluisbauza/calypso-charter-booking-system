@@ -22,6 +22,7 @@ public class UserService {
     public UserService() throws SQLException, ClassNotFoundException {
     }
 
+    // AUTHENTICATION
     public boolean userExistsByMail(String mail) throws SQLException, ClassNotFoundException {
 
         return userDao.findByMail(mail) != null;
@@ -36,33 +37,6 @@ public class UserService {
 
     }
 
-    public String registerUser(User user) throws SQLException, ClassNotFoundException {
-
-        String password = PasswordGenerator.generateTempPassword();
-        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
-
-        user.setCurrentPasswordHash(passwordHash);
-
-        userDao.create(user);
-
-        PasswordHistory passwordHistory = new PasswordHistory(user, passwordHash);
-
-        passwordHistoryDao.create(passwordHistory);
-
-        return password;
-    }
-
-    public String getQuestionByMail(String mail) throws SQLException, ClassNotFoundException {
-
-        User user = userDao.findByMail(mail);
-
-        SecurityQuestionDao securityQuestionDao = new SecurityQuestionDao();
-
-        String question = (securityQuestionDao.read(user.getIdSecurityQuestion())).getSecurityQuestion();
-
-        return question;
-    }
-
     public boolean checkPasswordNeedsChange(String mail) throws SQLException, ClassNotFoundException {
 
         User user = userDao.findByMail(mail);
@@ -71,47 +45,7 @@ public class UserService {
 
     }
 
-    public boolean confirmAnswer(String mail, String answer) throws  SQLException, ClassNotFoundException {
-
-        User user = userDao.findByMail(mail);
-
-        return user.getSecurityAnswer().equals(answer);
-    }
-
-    public void updatePassword(String mail, String password) throws SQLException, ClassNotFoundException {
-
-        User user = userDao.findByMail(mail);
-
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-        user.setCurrentPasswordHash(hashedPassword);
-        user.setMustChangePassword(false);
-
-        userDao.updatePassword(user);
-
-        PasswordHistory passwordHistory = new PasswordHistory(user, hashedPassword);
-        passwordHistoryDao.create(passwordHistory);
-
-    }
-
-    public boolean isPasswordNew(String mail, String newPassword) throws SQLException, ClassNotFoundException {
-
-        User user = userDao.findByMail(mail);
-
-        List<PasswordHistory> passwordHistories = passwordHistoryDao.findByUserId(user.getIdUser());
-
-        for (PasswordHistory passwordHistory : passwordHistories) {
-
-            if (BCrypt.checkpw(newPassword, passwordHistory.getPasswordHash()))
-            {
-                return false;
-            }
-
-        }
-
-        return true;
-
-    }
-
+    // PASSWORD MANAGEMENT
     public boolean isPasswordValid(String password) throws Exception {
 
         boolean longEnough = false;
@@ -151,4 +85,76 @@ public class UserService {
         return longEnough && hasLowerCase && hasUpperCase && hasNumber;
 
     }
+
+    public boolean isPasswordNew(String mail, String newPassword) throws SQLException, ClassNotFoundException {
+
+        User user = userDao.findByMail(mail);
+
+        List<PasswordHistory> passwordHistories = passwordHistoryDao.findByUserId(user.getIdUser());
+
+        for (PasswordHistory passwordHistory : passwordHistories) {
+
+            if (BCrypt.checkpw(newPassword, passwordHistory.getPasswordHash()))
+            {
+                return false;
+            }
+
+        }
+
+        return true;
+
+    }
+
+    public void updatePassword(String mail, String password) throws SQLException, ClassNotFoundException {
+
+        User user = userDao.findByMail(mail);
+
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        user.setCurrentPasswordHash(hashedPassword);
+        user.setMustChangePassword(false);
+
+        userDao.updatePassword(user);
+
+        PasswordHistory passwordHistory = new PasswordHistory(user, hashedPassword);
+        passwordHistoryDao.create(passwordHistory);
+
+    }
+
+    // PASSWORD RECOVERY
+
+    public String getQuestionByMail(String mail) throws SQLException, ClassNotFoundException {
+
+        User user = userDao.findByMail(mail);
+
+        SecurityQuestionDao securityQuestionDao = new SecurityQuestionDao();
+
+        String question = (securityQuestionDao.read(user.getIdSecurityQuestion())).getSecurityQuestion();
+
+        return question;
+    }
+
+    public boolean confirmAnswer(String mail, String answer) throws  SQLException, ClassNotFoundException {
+
+        User user = userDao.findByMail(mail);
+
+        return user.getSecurityAnswer().equals(answer);
+    }
+
+    // USER REGISTRATION
+    public String registerUser(User user) throws SQLException, ClassNotFoundException {
+
+        String password = PasswordGenerator.generateTempPassword();
+        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        user.setCurrentPasswordHash(passwordHash);
+
+        userDao.create(user);
+
+        PasswordHistory passwordHistory = new PasswordHistory(user, passwordHash);
+
+        passwordHistoryDao.create(passwordHistory);
+
+        return password;
+    }
+
 }
