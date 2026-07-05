@@ -25,6 +25,7 @@ public class Main {
             switch(option) {
                 case 1:
                     introduceMail();
+                    userDashboard();
                     break;
                 case 2:
                     break;
@@ -58,6 +59,8 @@ public class Main {
 
         return option;
     }
+
+    // USER, PASSWORD AND LOG IN MANAGEMENT
 
     public static void introduceMail() throws Exception {
 
@@ -143,7 +146,7 @@ public class Main {
         int count = 1;
         for (SecurityQuestion securityQuestion : securityQuestions)
         {
-            System.out.println(count + ". " + securityQuestion);
+            System.out.println(count + ". " + securityQuestion.getSecurityQuestion());
             count++;
         }
 
@@ -164,6 +167,7 @@ public class Main {
 
         generateTempPasswordFile(user, tempPassword);
 
+        System.out.println("Congratulations, you've registered correctly.");
     }
 
     public static void generateTempPasswordFile(User user, String tempPassword) throws IOException {
@@ -174,6 +178,42 @@ public class Main {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+
+    }
+
+    private static void userDashboard() {
+        int option = 0;
+
+        System.out.println();
+        System.out.println("1. Reservations.");
+        System.out.println("2. Agencies");
+        System.out.println("3. Clients");
+        System.out.println("4. Exit.");
+
+        try {
+            option = Input.askInt("Chose a number from the menu: ");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        do {
+            switch(option) {
+                case 1:
+                    System.out.println();
+                    System.out.println("Total upcoming reservations: " + userService.upcomingReservations());
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    System.out.println("Bye");
+                    break;
+                default:
+                    System.out.println("Choose from 1 to 4.");
+            }
+
+        } while (option != 4);
 
     }
 

@@ -22,8 +22,18 @@ public class UserServiceTest {
     private SecurityQuestionDao securityQuestionDao;
     private UserService userService;
     private PasswordHistoryDao passwordHistoryDao;
-    private String mail;
+
     private int securityQuestionId;
+    private String mail;
+    private String password;
+    private String tempPassword;
+    private String securityAnswer;
+    private String username;
+    private String firstName;
+    private String lastName1;
+    private String lastName2;
+
+    private User tempUser;
 
     @BeforeEach
     void setUp() throws SQLException, ClassNotFoundException{
@@ -32,7 +42,7 @@ public class UserServiceTest {
         userService = new UserService();
         passwordHistoryDao = new PasswordHistoryDao();
 
-        mail = "lluis@calipso.com";
+        mail = "test@calipso.com";
 
         SecurityQuestion testSecurityQuestion = new SecurityQuestion("Test question " + System.nanoTime());
         securityQuestionDao.create(testSecurityQuestion);
@@ -44,6 +54,16 @@ public class UserServiceTest {
                 securityQuestionId = question.getIdSecurityQuestion();
             }
         }
+
+        securityAnswer = "Black";
+        username = "testBlack";
+        firstName = "test";
+        lastName1 = "Black";
+        lastName2 = "";
+
+        tempUser = new User (securityQuestionId, username, firstName,
+                lastName1, lastName2, mail, securityAnswer);
+
     }
 
     @AfterEach
@@ -51,11 +71,11 @@ public class UserServiceTest {
         User user = userDao.findByMail(mail);
 
         if (user != null) {
-            PasswordHistory passwordHistory =
-                    passwordHistoryDao.findByPassword(user.getCurrentPasswordHash());
+            List<PasswordHistory> histories =
+                    passwordHistoryDao.findByUserId(user.getIdUser());
 
-            if (passwordHistory != null) {
-                passwordHistoryDao.delete(passwordHistory.getIdPasswordHistory());
+            for (PasswordHistory history : histories) {
+                passwordHistoryDao.delete(history.getIdPasswordHistory());
             }
 
             userDao.delete(user.getIdUser());
@@ -69,16 +89,7 @@ public class UserServiceTest {
     @Test
     void registerUser_shouldCreateUserWithTemporaryPassword() throws Exception {
 
-        String securityAnswer = "Black";
-        String username = "lluisBlack";
-        String firstName = "Lluis";
-        String lastName1 = "Bauzá";
-        String lastName2 = "";
-
-        User tempUser = new User (securityQuestionId, username, firstName,
-                lastName1, lastName2, mail, securityAnswer);
-
-        String tempPassword = userService.registerUser(tempUser);
+        tempPassword = userService.registerUser(tempUser);
 
         User user = userDao.findByMail(mail);
 
@@ -92,5 +103,56 @@ public class UserServiceTest {
         assertTrue(user.isMustChangePassword());
     }
 
+    @Test
+    void login_shouldReturnTrue_whenCredentialsAreCorrect() throws SQLException, ClassNotFoundException {
+
+        boolean success = false;
+
+        tempPassword = userService.registerUser(tempUser);
+
+        if (userService.userExistsByMail(mail)) {
+            success = true;
+        }
+
+        assertTrue(success);
+        assertTrue(userService.login(mail, tempPassword));
+        assertTrue(userService.checkPasswordNeedsChange(mail));
+
+    }
+
+    @Test
+    void login_shouldReturnFalse_whenPasswordIsWrong() throws SQLException, ClassNotFoundException {
+
+        boolean success = false;
+
+        tempPassword = userService.registerUser(tempUser);
+
+        if (userService.userExistsByMail(mail)) {
+            success = true;
+        }
+
+        assertTrue(success);
+        assertFalse(userService.login(mail, "testPassword"));
+
+    }
+
+    @Test
+    void updatePassword_shouldChangePasswordAndDisableMustChangePassword() throws Exception {
+
+        tempPassword = userService.registerUser(tempUser);
+
+        String newPassword = "helloWorld123";
+
+        assertTrue(userService.isPasswordValid(newPassword));
+        assertTrue(userService.isPasswordNew(mail, newPassword));
+
+        userService.updatePassword(mail, newPassword);
+
+        User user = userDao.findByMail(mail);
+
+        assertTrue(BCrypt.checkpw(newPassword, user.getCurrentPasswordHash()));
+        assertFalse(user.isMustChangePassword());
+
+    }
 
 }
