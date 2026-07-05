@@ -1,7 +1,8 @@
 package com.lluisbauza.calipso.service;
 
+import com.lluisbauza.calipso.dao.BoatDao;
 import com.lluisbauza.calipso.dao.ReservationDao;
-import com.lluisbauza.calipso.model.Agency;
+import com.lluisbauza.calipso.dao.TripTypeDao;
 import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.Reservation;
 import com.lluisbauza.calipso.model.TripType;
@@ -9,8 +10,7 @@ import com.lluisbauza.calipso.model.TripType;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ReservationService {
@@ -82,13 +82,14 @@ public class ReservationService {
     }
 
     // RESERVATION DATA HANDLER
+
     public int upcomingReservations() throws SQLException, ClassNotFoundException {
 
         int count = 0;
         List<Reservation> reservations = reservationDao.listAll();
 
         for (Reservation reservation : reservations) {
-            if (reservation.getReservationDate().compareTo(LocalDate.now())  > 0 ) {
+            if (reservation.getReservationDate().isAfter(LocalDate.now())) {
                 count++;
             }
         }
@@ -112,37 +113,62 @@ public class ReservationService {
 
     }
 
-    public int upcomingReservationsPerBoat(Boat boat) throws SQLException, ClassNotFoundException {
+    public Map<String, Integer> upcomingReservationsPerBoat() throws SQLException, ClassNotFoundException {
 
-        int count = 0;
+        Map<String, Integer> reservationsPerBoat = new HashMap<>();
+        BoatDao boatDao = new BoatDao();
+        List<Boat> boats = boatDao.listAll();
+
         List<Reservation> reservations = reservationDao.listAll();
 
-        for (Reservation reservation : reservations) {
-            if (reservation.getReservationDate().compareTo(LocalDate.now())  > 0 ) {
-                if (reservation.getTripType().getBoat().getBoatName().equals(boat.getBoatName())) {
-                    count++;
+        for (Boat boat : boats) {
+
+            String boatName = boat.getBoatName();
+            reservationsPerBoat.put(boatName, 0);
+
+            for (Reservation reservation : reservations) {
+                if (reservation.getReservationDate().isAfter(LocalDate.now())) {
+                    if (reservation.getTripType().getBoat().getBoatName().equals(boatName)) {
+                        reservationsPerBoat.put(boatName, reservationsPerBoat.get(boatName) + 1);
+                    }
                 }
             }
         }
 
-        return count;
+        return reservationsPerBoat;
 
     }
 
-    public int upcomingReservationsPerType(TripType tripType) throws SQLException, ClassNotFoundException {
+    public Map<String, Integer> upcomingReservationsPerType() throws SQLException, ClassNotFoundException {
 
-        int count = 0;
+        Map<String, Integer> reservationsPerType = new HashMap<>();
+        TripTypeDao tripTypeDao = new TripTypeDao();
+        List<TripType> tripTypes = tripTypeDao.listAll();
+
+        List<String> shown = new ArrayList<>();
         List<Reservation> reservations = reservationDao.listAll();
 
-        for (Reservation reservation : reservations) {
-            if (reservation.getReservationDate().compareTo(LocalDate.now())  > 0 ) {
-                if (reservation.getTripType().getTripOption().equals(tripType.getTripOption())) {
-                    count++;
+        for (TripType tripType : tripTypes) {
+            if (!shown.contains(tripType.getTripOption())) {
+                String tripName = tripType.getTripOption();
+
+                shown.add(tripName);
+                reservationsPerType.put(tripName, 0);
+
+                for (Reservation reservation : reservations) {
+
+                    if (reservation.getReservationDate().isAfter(LocalDate.now())) {
+                        if (reservation.getTripType().getTripOption().equals(tripType.getTripOption())) {
+                            reservationsPerType.put(tripName, reservationsPerType.get(tripName) + 1);
+                        }
+                    }
                 }
+
             }
+
         }
 
-        return count;
+        return reservationsPerType;
 
     }
 

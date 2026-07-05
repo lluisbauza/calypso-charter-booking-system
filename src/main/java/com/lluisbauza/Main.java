@@ -1,11 +1,7 @@
 package com.lluisbauza;
 
-import com.lluisbauza.calipso.dao.BoatDao;
 import com.lluisbauza.calipso.dao.SecurityQuestionDao;
-import com.lluisbauza.calipso.dao.TripTypeDao;
-import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.SecurityQuestion;
-import com.lluisbauza.calipso.model.TripType;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.service.ReservationService;
 import com.lluisbauza.calipso.service.UserService;
@@ -14,15 +10,15 @@ import com.lluisbauza.calipso.util.PasswordFileGenerator;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
     private static UserService userService;
     private static ReservationService reservationService;
 
-    public static void main(String[] args) throws Exception, SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws Exception {
 
         userService = new UserService();
         reservationService = new ReservationService();
@@ -242,32 +238,23 @@ public class Main {
         System.out.println("Total upcoming reservations: " + reservationService.upcomingReservations());
         System.out.println("Total reservations in the last month: " + reservationService.lastMonthReservations());
 
-        BoatDao boatDao = new BoatDao();
-        List<Boat> boats = boatDao.listAll();
+        Map<String, Integer> reservationsPerBoat = reservationService.upcomingReservationsPerBoat();
 
         System.out.println("Upcoming reservations per boat: ");
-        for (Boat boat : boats) {
-            System.out.print("-" + boat.getBoatName() + ": ");
-            System.out.println(reservationService.upcomingReservationsPerBoat(boat));
+        for (String boatName : reservationsPerBoat.keySet()) {
+            System.out.print("-" + boatName.toString() + ": ");
+            System.out.println(reservationsPerBoat.get(boatName).toString());
         }
 
-        TripTypeDao tripTypeDao = new TripTypeDao();
-        List<TripType> tripTypes = tripTypeDao.listAll();
-        List<String> shown = new ArrayList<>();
+        Map<String, Integer> reservationsPerTripType = reservationService.upcomingReservationsPerType();
 
         System.out.println("Upcoming reservations per type: ");
 
-
-        for (TripType tripType : tripTypes) {
-            if (!shown.contains(tripType.getTripOption())) {
-                shown.add(tripType.getTripOption());
-
-                System.out.println("-" + tripType.getTripOption() + ": "
-                        + reservationService.upcomingReservationsPerType(tripType));
-            }
+        for (String tripOption : reservationsPerTripType.keySet()) {
+            System.out.print("-" + tripOption.toString() + ": " );
+            System.out.println(reservationsPerTripType.get(tripOption).toString());
         }
 
     }
-
 
 }
