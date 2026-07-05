@@ -2,9 +2,12 @@ package com.lluisbauza.calipso.service;
 
 import com.lluisbauza.calipso.dao.ReservationDao;
 import com.lluisbauza.calipso.model.Agency;
+import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.Reservation;
+import com.lluisbauza.calipso.model.TripType;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
@@ -78,7 +81,69 @@ public class ReservationService {
         return exists;
     }
 
+    // RESERVATION DATA HANDLER
+    public int upcomingReservations() throws SQLException, ClassNotFoundException {
 
+        int count = 0;
+        List<Reservation> reservations = reservationDao.listAll();
 
+        for (Reservation reservation : reservations) {
+            if (reservation.getReservationDate().compareTo(LocalDate.now())  > 0 ) {
+                count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    public int lastMonthReservations() throws SQLException, ClassNotFoundException {
+
+        int count = 0;
+        List<Reservation> reservations = reservationDao.listAll();
+
+        for (Reservation reservation : reservations) {
+            if (reservation.getReservationDate().getMonthValue() == LocalDate.now().getMonthValue() - 1 ) {
+                count++;
+            }
+        }
+
+        return count;
+
+    }
+
+    public int upcomingReservationsPerBoat(Boat boat) throws SQLException, ClassNotFoundException {
+
+        int count = 0;
+        List<Reservation> reservations = reservationDao.listAll();
+
+        for (Reservation reservation : reservations) {
+            if (reservation.getReservationDate().compareTo(LocalDate.now())  > 0 ) {
+                if (reservation.getTripType().getBoat().getBoatName().equals(boat.getBoatName())) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+
+    }
+
+    public int upcomingReservationsPerType(TripType tripType) throws SQLException, ClassNotFoundException {
+
+        int count = 0;
+        List<Reservation> reservations = reservationDao.listAll();
+
+        for (Reservation reservation : reservations) {
+            if (reservation.getReservationDate().compareTo(LocalDate.now())  > 0 ) {
+                if (reservation.getTripType().getTripOption().equals(tripType.getTripOption())) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+
+    }
 
 }

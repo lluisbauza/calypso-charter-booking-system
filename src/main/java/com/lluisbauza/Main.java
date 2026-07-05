@@ -1,23 +1,31 @@
 package com.lluisbauza;
 
+import com.lluisbauza.calipso.dao.BoatDao;
 import com.lluisbauza.calipso.dao.SecurityQuestionDao;
+import com.lluisbauza.calipso.dao.TripTypeDao;
+import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.SecurityQuestion;
+import com.lluisbauza.calipso.model.TripType;
 import com.lluisbauza.calipso.model.User;
+import com.lluisbauza.calipso.service.ReservationService;
 import com.lluisbauza.calipso.service.UserService;
 import com.lluisbauza.calipso.util.Input;
 import com.lluisbauza.calipso.util.PasswordFileGenerator;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
     private static UserService userService;
+    private static ReservationService reservationService;
 
     public static void main(String[] args) throws Exception, SQLException, ClassNotFoundException {
 
         userService = new UserService();
+        reservationService = new ReservationService();
 
         int option;
         do {
@@ -62,7 +70,7 @@ public class Main {
 
     // USER, PASSWORD AND LOG IN MANAGEMENT
 
-    public static void introduceMail() throws Exception {
+    public static boolean introduceMail() throws Exception {
 
         String mail = Input.askString("Mail: ");
 
@@ -77,6 +85,7 @@ public class Main {
                     askNewPassword(mail);
                 } else {
                     System.out.println("WELCOME");
+                    return true;
                 }
 
             } else {
@@ -86,10 +95,21 @@ public class Main {
             }
 
         } else {
-            System.out.println("User not found. Let's create an account");
-            register(mail);
+            System.out.println("User not found.");
+            System.out.println("What do you wanna do?");
+            System.out.println("1. Try again?");
+            System.out.println("2. Create an account?");
+
+            int retry = Input.askInt("What do you wanna do: ");
+            if (retry == 1) {
+                introduceMail();
+            } else if (retry == 2) {
+                register(mail);
+            }
+
         }
 
+        return false;
     }
 
     public static void askNewPassword(String mail) throws Exception {
@@ -181,39 +201,71 @@ public class Main {
 
     }
 
-    private static void userDashboard() {
+    private static void userDashboard() throws SQLException, ClassNotFoundException {
         int option = 0;
 
-        System.out.println();
-        System.out.println("1. Reservations.");
-        System.out.println("2. Agencies");
-        System.out.println("3. Clients");
-        System.out.println("4. Exit.");
-
-        try {
-            option = Input.askInt("Chose a number from the menu: ");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
         do {
-            switch(option) {
-                case 1:
-                    System.out.println();
-                    System.out.println("Total upcoming reservations: " + userService.upcomingReservations());
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    System.out.println("Bye");
-                    break;
-                default:
-                    System.out.println("Choose from 1 to 4.");
+
+            System.out.println();
+            System.out.println("1. Reservations.");
+            System.out.println("2. Agencies");
+            System.out.println("3. Clients");
+            System.out.println("4. Exit.");
+
+            try {
+                option = Input.askInt("Chose a number from the menu: ");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
 
+                switch(option) {
+                    case 1:
+                        reservationInfo();
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        System.out.println("Bye");
+                        break;
+                    default:
+                        System.out.println("Choose from 1 to 4.");
+                }
+
         } while (option != 4);
+
+    }
+
+    private static void reservationInfo() throws SQLException, ClassNotFoundException {
+        System.out.println();
+        System.out.println("Total upcoming reservations: " + reservationService.upcomingReservations());
+        System.out.println("Total reservations in the last month: " + reservationService.lastMonthReservations());
+
+        BoatDao boatDao = new BoatDao();
+        List<Boat> boats = boatDao.listAll();
+
+        System.out.println("Upcoming reservations per boat: ");
+        for (Boat boat : boats) {
+            System.out.print("-" + boat.getBoatName() + ": ");
+            System.out.println(reservationService.upcomingReservationsPerBoat(boat));
+        }
+
+        TripTypeDao tripTypeDao = new TripTypeDao();
+        List<TripType> tripTypes = tripTypeDao.listAll();
+        List<String> shown = new ArrayList<>();
+
+        System.out.println("Upcoming reservations per type: ");
+
+
+        for (TripType tripType : tripTypes) {
+            if (!shown.contains(tripType.getTripOption())) {
+                shown.add(tripType.getTripOption());
+
+                System.out.println("-" + tripType.getTripOption() + ": "
+                        + reservationService.upcomingReservationsPerType(tripType));
+            }
+        }
 
     }
 
