@@ -141,34 +141,7 @@ public class ReservationService {
 
     public Map<String, Integer> upcomingReservationsPerType() throws SQLException, ClassNotFoundException {
 
-        Map<String, Integer> reservationsPerType = new HashMap<>();
-        TripTypeDao tripTypeDao = new TripTypeDao();
-        List<TripType> tripTypes = tripTypeDao.listAll();
-
-        List<String> shown = new ArrayList<>();
-        List<Reservation> reservations = reservationDao.listAll();
-
-        for (TripType tripType : tripTypes) {
-            if (!shown.contains(tripType.getTripOption())) {
-                String tripName = tripType.getTripOption();
-
-                shown.add(tripName);
-                reservationsPerType.put(tripName, 0);
-
-                for (Reservation reservation : reservations) {
-
-                    if (reservation.getReservationDate().isAfter(LocalDate.now())) {
-                        if (reservation.getTripType().getTripOption().equals(tripType.getTripOption())) {
-                            reservationsPerType.put(tripName, reservationsPerType.get(tripName) + 1);
-                        }
-                    }
-                }
-
-            }
-
-        }
-
-        return reservationsPerType;
+        return reservationDao.countReservationsPerType();
 
     }
 

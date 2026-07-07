@@ -6,7 +6,9 @@ import com.lluisbauza.calipso.util.ConnectionManager;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationDao implements CrudDao<Reservation> {
 
@@ -570,6 +572,30 @@ public class ReservationDao implements CrudDao<Reservation> {
         }
 
         return reservedSeats;
+    }
+
+    public Map<String, Integer> countReservationsPerType() throws SQLException, ClassNotFoundException {
+
+        Map<String, Integer> reservations = new HashMap<>();
+
+        String sql = "SELECT boats.boat_name AS Name, COUNT(reservations.id_reservation) AS Total FROM boats\n" +
+                "    JOIN trip_types ON trip_types.id_boat = boats.id_boat\n" +
+                "    LEFT JOIN reservations ON reservations.id_trip_type = trip_types.id_trip_type\n" +
+                "GROUP BY Name;";
+
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql)
+        ) {
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String boatName = rs.getString("Name");
+                int totalReservationsPerBoat = rs.getInt("Total");
+                reservations.put(boatName, totalReservationsPerBoat);
+            }
+        }
+        return reservations;
     }
 
 }

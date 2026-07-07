@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -314,5 +316,18 @@ public class ReservationDaoTest {
         assertEquals(10, reservedSeats);
 
     }
+
+    @Test
+    void countReservationsPerType_shouldReturnAllBoatsAndTotalReservations() throws SQLException, ClassNotFoundException {
+
+        Map<String, Integer> reservations = new HashMap<>();
+
+        reservations = reservationDao.countReservationsPerType();
+
+        assertNotNull(reservations);
+        assertTrue(reservations.size() > 1);
+
+    }
+
 
 }
