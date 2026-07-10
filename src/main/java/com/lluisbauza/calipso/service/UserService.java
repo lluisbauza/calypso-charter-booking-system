@@ -4,11 +4,14 @@ import com.lluisbauza.calipso.dao.PasswordHistoryDao;
 import com.lluisbauza.calipso.dao.SecurityQuestionDao;
 import com.lluisbauza.calipso.dao.UserDao;
 import com.lluisbauza.calipso.model.PasswordHistory;
+import com.lluisbauza.calipso.model.SecurityQuestion;
 import com.lluisbauza.calipso.model.User;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.lluisbauza.calipso.util.PasswordFileGenerator;
 import com.lluisbauza.calipso.util.PasswordGenerator;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -18,6 +21,8 @@ public class UserService {
 
     private UserDao userDao = new UserDao();
     private PasswordHistoryDao passwordHistoryDao = new PasswordHistoryDao();
+    private SecurityQuestionDao securityQuestionDao = new SecurityQuestionDao();
+
 
     public UserService() throws SQLException, ClassNotFoundException {
     }
@@ -105,7 +110,15 @@ public class UserService {
 
     }
 
-    public void updatePassword(String mail, String password) throws SQLException, ClassNotFoundException {
+    public void updatePassword(String mail, String password) throws Exception {
+
+        isPasswordValid(password);
+
+        if (!isPasswordNew(mail, password)) {
+            throw new IllegalArgumentException(
+                    "You can't use a password you've used in the past."
+            );
+        }
 
         User user = userDao.findByMail(mail);
 
@@ -141,6 +154,12 @@ public class UserService {
     }
 
     // USER REGISTRATION
+
+    public List<SecurityQuestion> getSecurityQuestions()
+            throws SQLException, ClassNotFoundException {
+        return securityQuestionDao.listAll();
+    }
+
     public String registerUser(User user) throws SQLException, ClassNotFoundException {
 
         String password = PasswordGenerator.generateTempPassword();
@@ -153,6 +172,12 @@ public class UserService {
         PasswordHistory passwordHistory = new PasswordHistory(user, passwordHash);
 
         passwordHistoryDao.create(passwordHistory);
+
+        try {
+            PasswordFileGenerator.generatePasswordFile(user, password);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         return password;
     }

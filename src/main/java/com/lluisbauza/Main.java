@@ -1,14 +1,11 @@
 package com.lluisbauza;
 
-import com.lluisbauza.calipso.dao.SecurityQuestionDao;
 import com.lluisbauza.calipso.model.SecurityQuestion;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.service.ReservationService;
 import com.lluisbauza.calipso.service.UserService;
 import com.lluisbauza.calipso.util.Input;
-import com.lluisbauza.calipso.util.PasswordFileGenerator;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +25,9 @@ public class Main {
             option = openMenu();
             switch(option) {
                 case 1:
-                    introduceMail();
-                    userDashboard();
+                    if (introduceMail()) {
+                        userDashboard();
+                    }
                     break;
                 case 2:
                     break;
@@ -46,7 +44,7 @@ public class Main {
 
     }
 
-    public static int openMenu() throws Exception {
+    public static int openMenu() {
         int option = 0;
 
         System.out.println();
@@ -79,10 +77,10 @@ public class Main {
 
                 if (userService.checkPasswordNeedsChange(mail)) {
                     askNewPassword(mail);
-                } else {
-                    System.out.println("WELCOME");
-                    return true;
                 }
+
+                System.out.println("WELCOME");
+                return true;
 
             } else {
                 System.out.println("Incorrect password.");
@@ -98,9 +96,10 @@ public class Main {
 
             int retry = Input.askInt("What do you wanna do: ");
             if (retry == 1) {
-                introduceMail();
+                return introduceMail();
             } else if (retry == 2) {
                 register(mail);
+                return introduceMail();
             }
 
         }
@@ -117,23 +116,15 @@ public class Main {
 
             password = Input.askString("Introduce a new password: ");
 
-            try {
-                userService.isPasswordValid(password);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                continue;
-            }
-
-            if (!userService.isPasswordNew(mail, password)) {
-                System.out.println("You can't use a password you've used in the past.");
-                continue;
-            }
-
             newPasswordConfirm = Input.askString("Type it again: ");
             if (password.equals(newPasswordConfirm)) {
-                userService.updatePassword(mail, password);
-                System.out.println("Password changed");
-                success = true;
+                try {
+                    userService.updatePassword(mail, password);
+                    System.out.println("Password changed");
+                    success = true;
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
             } else {
                 System.out.println("The passwords do not match.");
             }
@@ -146,18 +137,26 @@ public class Main {
 
         String question = userService.getQuestionByMail(mail);
         System.out.println(question);
-        String answer = Input.askString("What's the answer? ");
 
-        if (userService.confirmAnswer(mail, answer)) {
-            askNewPassword(mail);
+        boolean correctAnswer = false;
+
+        while (!correctAnswer) {
+            String answer = Input.askString("What's the answer? ");
+
+            correctAnswer = userService.confirmAnswer(mail, answer);
+
+            if (correctAnswer) {
+                askNewPassword(mail);
+            } else {
+                System.out.println("Wrong answer.");
+            }
         }
 
     }
 
     public static void register(String mail) throws Exception {
 
-        SecurityQuestionDao securityQuestionDao = new SecurityQuestionDao();
-        List<SecurityQuestion> securityQuestions = securityQuestionDao.listAll();
+        List<SecurityQuestion> securityQuestions = userService.getSecurityQuestions();
 
         int count = 1;
         for (SecurityQuestion securityQuestion : securityQuestions)
@@ -166,7 +165,16 @@ public class Main {
             count++;
         }
 
-        int choice = Input.askInt("Choose a question: ");
+        int choice;
+
+        do {
+            choice = Input.askInt("Choose a question: ");
+
+            if (choice < 1 || choice > securityQuestions.size()) {
+                System.out.println("Choose a number from 1 to " + securityQuestions.size() + ".");
+            }
+
+        } while (choice < 1 || choice > securityQuestions.size());
 
         SecurityQuestion securityQuestion = securityQuestions.get(choice - 1);
 
@@ -179,22 +187,9 @@ public class Main {
         User user = new User (securityQuestion.getIdSecurityQuestion(), username, firstName,
                 lastName1, lastName2, mail, securityAnswer);
 
-        String tempPassword = userService.registerUser(user);
-
-        generateTempPasswordFile(user, tempPassword);
+        userService.registerUser(user);
 
         System.out.println("Congratulations, you've registered correctly.");
-    }
-
-    public static void generateTempPasswordFile(User user, String tempPassword) throws IOException {
-
-        try {
-            PasswordFileGenerator.generatePasswordFile(user, tempPassword);
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
     }
 
     private static void userDashboard() throws SQLException, ClassNotFoundException {
@@ -242,8 +237,8 @@ public class Main {
 
         System.out.println("Upcoming reservations per boat: ");
         for (String boatName : reservationsPerBoat.keySet()) {
-            System.out.print("-" + boatName.toString() + ": ");
-            System.out.println(reservationsPerBoat.get(boatName).toString());
+            System.out.print("-" + boatName + ": ");
+            System.out.println(reservationsPerBoat.get(boatName));
         }
 
         Map<String, Integer> reservationsPerTripType = reservationService.upcomingReservationsPerType();
@@ -251,8 +246,8 @@ public class Main {
         System.out.println("Upcoming reservations per type: ");
 
         for (String tripOption : reservationsPerTripType.keySet()) {
-            System.out.print("-" + tripOption.toString() + ": " );
-            System.out.println(reservationsPerTripType.get(tripOption).toString());
+            System.out.print("-" + tripOption + ": " );
+            System.out.println(reservationsPerTripType.get(tripOption));
         }
 
     }
