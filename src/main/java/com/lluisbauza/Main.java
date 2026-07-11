@@ -213,7 +213,6 @@ public class Main {
 
                 switch(option) {
                     case 1:
-                        reservationInfo();
                         reservationDashboard();
                         break;
                     case 2:
@@ -232,7 +231,46 @@ public class Main {
     }
 
     // RESERVATIONS DASHBOARD
-    private static void reservationInfo() throws SQLException, ClassNotFoundException {
+
+    private static void reservationDashboard() throws Exception {
+        int option = 0;
+
+        do {
+
+            System.out.println();
+            System.out.println("1. Resrvation Statics.");
+            System.out.println("2. All reservations ordered");
+            System.out.println("3. Search Reservations");
+            System.out.println("4. Exit.");
+
+            try {
+                option = Input.askInt("Chose a number from the menu: ");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            switch(option) {
+                case 1:
+                    reservationsBasicStatistics();
+                    break;
+                case 2:
+                    getAllReservationsOrderedBy();
+                    break;
+                case 3:
+                    findReservationSummaryByCode();
+                    break;
+                case 4:
+                    System.out.println("Bye");
+                    break;
+                default:
+                    System.out.println("Choose from 1 to 4.");
+            }
+
+        } while (option != 4);
+
+    }
+
+    private static void reservationsBasicStatistics() throws SQLException, ClassNotFoundException {
         System.out.println();
         System.out.println("Total upcoming reservations: " + reservationService.upcomingReservations());
         System.out.println("Total reservations in the last month: " + reservationService.lastMonthReservations());
@@ -256,7 +294,7 @@ public class Main {
 
     }
 
-    private static void reservationDashboard() throws Exception {
+    private static void getAllReservationsOrderedBy() throws Exception {
 
         ReservationOrder[] options = ReservationOrder.values();
 
@@ -271,11 +309,20 @@ public class Main {
 
         ReservationOrder order = options[option - 1];
 
-        List<ReservationSummary> summaries = reservationService.getReservationSummariesOrderedBy(order);
+        List<ReservationSummary> summaries = reservationService.listReservationSummariesOrderedBy(order);
 
         for (ReservationSummary summary : summaries) {
             System.out.println(summary);
         }
     }
 
+    private static void findReservationSummaryByCode() throws Exception {
+
+        String code = Input.askString("Introduce a code: ");
+
+        ReservationSummary reservationSummary = reservationService.findReservationSummaryByCode(code);
+
+        System.out.println(reservationSummary);
+
+    }
 }

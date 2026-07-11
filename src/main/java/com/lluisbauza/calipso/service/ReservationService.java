@@ -146,9 +146,21 @@ public class ReservationService {
     }
 
     // RESERVATION FULL DISPLAY AND ORDER/FILTER
-    public List<ReservationSummary> getReservationSummariesOrderedBy(ReservationOrder order) throws SQLException, ClassNotFoundException {
+    public List<ReservationSummary> listReservationSummariesOrderedBy(ReservationOrder order) throws SQLException, ClassNotFoundException {
 
         return reservationDao.listReservationSummariesOrderedBy(order);
+
+    }
+
+    public ReservationSummary findReservationSummaryByCode(String code) throws Exception {
+
+        ReservationSummary reservationSummary = reservationDao.findReservationSummaryByCode(code);
+
+        if (reservationSummary == null) {
+             throw new Exception("There's no reservation with that code.");
+        }
+
+        return reservationSummary;
 
     }
 
