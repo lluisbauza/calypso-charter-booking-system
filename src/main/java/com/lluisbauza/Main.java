@@ -1,6 +1,7 @@
 package com.lluisbauza;
 
 import com.lluisbauza.calipso.dto.ReservationSummary;
+import com.lluisbauza.calipso.enums.ReservationFilter;
 import com.lluisbauza.calipso.enums.ReservationOrder;
 import com.lluisbauza.calipso.enums.ReservationSearchField;
 import com.lluisbauza.calipso.model.SecurityQuestion;
@@ -9,6 +10,7 @@ import com.lluisbauza.calipso.service.ReservationService;
 import com.lluisbauza.calipso.service.UserService;
 import com.lluisbauza.calipso.util.Input;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -242,10 +244,12 @@ public class Main {
             System.out.println("1. Resrvation Statics.");
             System.out.println("2. All reservations ordered");
             System.out.println("3. Search Reservations");
-            System.out.println("4. Exit.");
+            System.out.println("4. Filter Reservations");
+            System.out.println("5. Exit.");
 
             try {
                 option = Input.askInt("Chose a number from the menu: ");
+                System.out.println();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -261,10 +265,13 @@ public class Main {
                     findReservationSummaryByField();
                     break;
                 case 4:
+                    filterReservations();
+                    break;
+                case 5:
                     System.out.println("Bye");
                     break;
                 default:
-                    System.out.println("Choose from 1 to 4.");
+                    System.out.println("Choose from 1 to 5.");
             }
 
         } while (option != 4);
@@ -315,6 +322,13 @@ public class Main {
         for (ReservationSummary summary : summaries) {
             System.out.println(summary);
         }
+
+        System.out.println();
+
+        if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
+            generateReservationConfirmation(summaries);
+        }
+
     }
 
     private static void findReservationSummaryByField() throws Exception {
@@ -338,6 +352,67 @@ public class Main {
         for (ReservationSummary summary : summaries) {
             System.out.println(summary);
         }
+
+        if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
+            generateReservationConfirmation(summaries);
+        }
+
+    }
+
+    // GENERATE PDF WITH RESERVATION CONFIRMATION
+    private static void generateReservationConfirmation(List<ReservationSummary> list) throws SQLException, IOException, ClassNotFoundException {
+
+        for (ReservationSummary reservationSummary : list) {
+            System.out.println(reservationSummary.getReservationCode());
+        }
+
+        String code = Input.askString("Indicate a code to generate confirmation: ");
+        reservationService.generateReservationConfirmation(code);
+
+    }
+
+    public static void filterReservations() throws SQLException, ClassNotFoundException, IOException {
+        ReservationFilter[] fields = ReservationFilter.values();
+
+        for (int i = 0; i < fields.length; i++) {
+            System.out.println((i + 1) + ". " + fields[i]);
+        }
+
+        int option = Input.askInt("Choose the filter: ");
+        System.out.println();
+
+        if (option < 1 || option > fields.length) {
+            throw new IllegalArgumentException("Invalid option.");
+        }
+
+        ReservationFilter filterType = fields[option - 1];
+
+        List<String> optionFilters = reservationService.getFiltersByField(filterType);
+
+        for (int i = 0; i < optionFilters.size(); i++) {
+            System.out.println((i + 1) + ". " + optionFilters.get(i));
+        }
+
+        int filterOption = Input.askInt("Choose the filter value: ");
+        System.out.println();
+
+        if (filterOption < 1 || filterOption > optionFilters.size()) {
+            throw new IllegalArgumentException("Invalid filter.");
+        }
+
+        String filterChoice = optionFilters.get(filterOption - 1);
+
+        List<ReservationSummary> summaries = reservationService.listReservationSummariesFilteredBy(filterType, filterChoice);
+
+        for (ReservationSummary summary : summaries) {
+            System.out.println(summary);
+        }
+
+        if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
+            generateReservationConfirmation(summaries);
+        }
+
+
     }
 
 

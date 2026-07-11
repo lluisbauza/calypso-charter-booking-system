@@ -4,26 +4,27 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Input {
-    public static int askInt(String prompt) throws Exception {
+    public static int askInt(String prompt) throws IllegalArgumentException {
         Scanner sc = new Scanner(System.in);
-        int integer;
         try {
             System.out.print(prompt);
-            integer = sc.nextInt();
+            return sc.nextInt();
         } catch (InputMismatchException e) {
-            throw new Exception ("It has to be an integer.");
+            throw new IllegalArgumentException("It has to be an integer.");
         }
-        return integer;
     }
 
     public static String askString(String prompt) {
         Scanner sc = new Scanner(System.in);
-        String string;
-
         System.out.print(prompt);
-        string = sc.nextLine();
-
-        return string;
+        return sc.nextLine();
     }
+
+    public static boolean askBoolean(String prompt) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print(prompt);
+        return sc.nextBoolean();
+    }
+
 
 }

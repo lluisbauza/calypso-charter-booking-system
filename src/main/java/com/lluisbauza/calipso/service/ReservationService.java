@@ -3,11 +3,16 @@ package com.lluisbauza.calipso.service;
 import com.lluisbauza.calipso.dao.BoatDao;
 import com.lluisbauza.calipso.dao.ReservationDao;
 import com.lluisbauza.calipso.dto.ReservationSummary;
+import com.lluisbauza.calipso.enums.ReservationFilter;
 import com.lluisbauza.calipso.enums.ReservationOrder;
 import com.lluisbauza.calipso.enums.ReservationSearchField;
+import com.lluisbauza.calipso.enums.ReservationStatus;
 import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.Reservation;
+import com.lluisbauza.calipso.util.ReservationConfirmationFileGenerator;
 
+import java.io.IOException;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -146,7 +151,7 @@ public class ReservationService {
 
     }
 
-    // RESERVATION FULL DISPLAY AND ORDER/FILTER
+    // RESERVATION FULL DISPLAY: ORDER, SEARCH & FILTER
     public List<ReservationSummary> listReservationSummariesOrderedBy(ReservationOrder order) throws SQLException, ClassNotFoundException {
 
         return reservationDao.listReservationSummariesOrderedBy(order);
@@ -159,5 +164,38 @@ public class ReservationService {
 
     }
 
+    public void generateReservationConfirmation(String code) throws SQLException, ClassNotFoundException, IOException {
+
+        Reservation reservation = reservationDao.findByReservationCode(code);
+
+        ReservationConfirmationFileGenerator.generateReservationConfirmation(reservation);
+
+    }
+
+    public List<String> getFiltersByField(ReservationFilter field) throws SQLException, ClassNotFoundException {
+
+        BoatDao boatDao = new BoatDao();
+        List<String> filters = null;
+
+        switch (field) {
+            case BOAT:
+                filters = boatDao.listBoatNames();
+                break;
+            case STATUS:
+                for (ReservationStatus status : ReservationStatus.values()) {
+                    filters.add(status.toString());
+                }
+                break;
+        }
+
+        return filters;
+    }
+
+
+    public List<ReservationSummary> listReservationSummariesFilteredBy(ReservationFilter reservationFilter, String filter) throws SQLException, ClassNotFoundException {
+
+        return reservationDao.listReservationSummariesFilteredBy(reservationFilter, filter);
+
+    }
 
 }

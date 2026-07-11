@@ -141,4 +141,22 @@ public class BoatDao implements CrudDao<Boat> {
 
         return boat;
     }
+
+    public List<String> listBoatNames() throws SQLException, ClassNotFoundException {
+        List<String> boats = new ArrayList<>();
+
+        String sql = "SELECT boat_name FROM boats";
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery();
+        ) {
+
+            while (rs.next()) {
+                boats.add(rs.getString("boat_name"));
+            }
+        }
+        return boats;
+    }
+
 }
