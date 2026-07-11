@@ -4,6 +4,7 @@ import com.lluisbauza.calipso.dao.BoatDao;
 import com.lluisbauza.calipso.dao.ReservationDao;
 import com.lluisbauza.calipso.dto.ReservationSummary;
 import com.lluisbauza.calipso.enums.ReservationOrder;
+import com.lluisbauza.calipso.enums.ReservationSearchField;
 import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.Reservation;
 
@@ -152,16 +153,11 @@ public class ReservationService {
 
     }
 
-    public ReservationSummary findReservationSummaryByCode(String code) throws Exception {
+    public List<ReservationSummary> findReservationSummaryByField(ReservationSearchField field, String value) throws Exception {
 
-        ReservationSummary reservationSummary = reservationDao.findReservationSummaryByCode(code);
-
-        if (reservationSummary == null) {
-             throw new Exception("There's no reservation with that code.");
-        }
-
-        return reservationSummary;
+        return reservationDao.findReservationSummaryByField(field, value);
 
     }
+
 
 }

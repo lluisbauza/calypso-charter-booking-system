@@ -2,6 +2,7 @@ package com.lluisbauza.calipso.dao;
 
 import com.lluisbauza.calipso.dto.ReservationSummary;
 import com.lluisbauza.calipso.enums.ReservationOrder;
+import com.lluisbauza.calipso.enums.ReservationSearchField;
 import com.lluisbauza.calipso.enums.ReservationStatus;
 import com.lluisbauza.calipso.model.*;
 import com.lluisbauza.calipso.util.ConnectionManager;
@@ -664,11 +665,17 @@ public class ReservationDao implements CrudDao<Reservation> {
 
         return summaries;
     }
-
-    public ReservationSummary findReservationSummaryByCode(String code)
+    
+    public List<ReservationSummary> findReservationSummaryByField(ReservationSearchField field, String value)
             throws SQLException, ClassNotFoundException {
 
-        ReservationSummary reservationSummary = null;
+        List<ReservationSummary> summaries = new ArrayList<>();
+
+        String searchField = switch (field) {
+            case CODE -> "r.reservation_code";
+            case NAME -> "c.name";
+            case MAIL -> "c.mail";
+        };
 
         String sql = "SELECT r.id_reservation,\n" +
                 "       r.reservation_code,\n" +
@@ -685,13 +692,13 @@ public class ReservationDao implements CrudDao<Reservation> {
                 "JOIN clients c ON r.id_client = c.id_client\n" +
                 "JOIN trip_types tt ON r.id_trip_type = tt.id_trip_type\n" +
                 "JOIN boats b ON tt.id_boat = b.id_boat\n" +
-                "WHERE r.reservation_code = ?";
+                "WHERE " + searchField + " = ?";
 
         try (
                 Connection con = ConnectionManager.getCon();
                 PreparedStatement pstmt = con.prepareStatement(sql);
         ) {
-            pstmt.setString(1, code);
+            pstmt.setString(1, value);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -699,7 +706,7 @@ public class ReservationDao implements CrudDao<Reservation> {
                 ReservationStatus reservationStatus =
                         ReservationStatus.valueOf(rs.getString("reservation_status"));
 
-                reservationSummary = new ReservationSummary(
+                ReservationSummary summary = new ReservationSummary(
                         rs.getInt("id_reservation"),
                         rs.getString("reservation_code"),
                         rs.getString("client_name"),
@@ -713,11 +720,14 @@ public class ReservationDao implements CrudDao<Reservation> {
                         reservationStatus
                 );
 
+                summaries.add(summary);
+
             }
         }
 
-        return reservationSummary;
+        return summaries;
     }
+
 
 
 }

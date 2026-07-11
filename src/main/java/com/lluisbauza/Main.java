@@ -2,6 +2,7 @@ package com.lluisbauza;
 
 import com.lluisbauza.calipso.dto.ReservationSummary;
 import com.lluisbauza.calipso.enums.ReservationOrder;
+import com.lluisbauza.calipso.enums.ReservationSearchField;
 import com.lluisbauza.calipso.model.SecurityQuestion;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.service.ReservationService;
@@ -257,7 +258,7 @@ public class Main {
                     getAllReservationsOrderedBy();
                     break;
                 case 3:
-                    findReservationSummaryByCode();
+                    findReservationSummaryByField();
                     break;
                 case 4:
                     System.out.println("Bye");
@@ -316,13 +317,28 @@ public class Main {
         }
     }
 
-    private static void findReservationSummaryByCode() throws Exception {
+    private static void findReservationSummaryByField() throws Exception {
+        ReservationSearchField[] fields = ReservationSearchField.values();
 
-        String code = Input.askString("Introduce a code: ");
+        for (int i = 0; i < fields.length; i++) {
+            System.out.println((i + 1) + ". " + fields[i]);
+        }
+        int option = Input.askInt("Choose: ");
 
-        ReservationSummary reservationSummary = reservationService.findReservationSummaryByCode(code);
+        if (option < 1 || option > fields.length) {
+            throw new IllegalArgumentException("Invalid option.");
+        }
 
-        System.out.println(reservationSummary);
+        ReservationSearchField searchField = fields[option - 1];
 
+        String value = Input.askString("Introduce a value: ");
+
+        List<ReservationSummary> summaries = reservationService.findReservationSummaryByField(searchField, value);
+
+        for (ReservationSummary summary : summaries) {
+            System.out.println(summary);
+        }
     }
+
+
 }
