@@ -1,5 +1,6 @@
 package com.lluisbauza.calipso.dao;
 
+import com.lluisbauza.calipso.enums.ReservationStatus;
 import com.lluisbauza.calipso.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

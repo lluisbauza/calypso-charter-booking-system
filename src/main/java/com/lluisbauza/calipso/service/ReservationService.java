@@ -2,10 +2,10 @@ package com.lluisbauza.calipso.service;
 
 import com.lluisbauza.calipso.dao.BoatDao;
 import com.lluisbauza.calipso.dao.ReservationDao;
-import com.lluisbauza.calipso.dao.TripTypeDao;
+import com.lluisbauza.calipso.dto.ReservationSummary;
+import com.lluisbauza.calipso.enums.ReservationOrder;
 import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.Reservation;
-import com.lluisbauza.calipso.model.TripType;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -81,7 +81,7 @@ public class ReservationService {
         return exists;
     }
 
-    // RESERVATION DATA HANDLER
+    // RESERVATION BASIC STATISTICS
 
     public int upcomingReservations() throws SQLException, ClassNotFoundException {
 
@@ -142,6 +142,13 @@ public class ReservationService {
     public Map<String, Integer> upcomingReservationsPerType() throws SQLException, ClassNotFoundException {
 
         return reservationDao.countReservationsPerType();
+
+    }
+
+    // RESERVATION FULL DISPLAY AND ORDER/FILTER
+    public List<ReservationSummary> getReservationSummariesOrderedBy(ReservationOrder order) throws SQLException, ClassNotFoundException {
+
+        return reservationDao.listReservationSummariesOrderedBy(order);
 
     }
 

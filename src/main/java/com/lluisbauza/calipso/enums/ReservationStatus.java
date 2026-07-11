@@ -1,4 +1,4 @@
-package com.lluisbauza.calipso.model;
+package com.lluisbauza.calipso.enums;
 
 public enum ReservationStatus {
     PENDING,

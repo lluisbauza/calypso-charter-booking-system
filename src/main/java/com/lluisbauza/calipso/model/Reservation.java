@@ -1,5 +1,7 @@
 package com.lluisbauza.calipso.model;
 
+import com.lluisbauza.calipso.enums.ReservationStatus;
+
 import java.time.LocalDate;
 
 public class Reservation {

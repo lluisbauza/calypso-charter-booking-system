@@ -1,5 +1,7 @@
 package com.lluisbauza;
 
+import com.lluisbauza.calipso.dto.ReservationSummary;
+import com.lluisbauza.calipso.enums.ReservationOrder;
 import com.lluisbauza.calipso.model.SecurityQuestion;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.service.ReservationService;
@@ -192,7 +194,7 @@ public class Main {
         System.out.println("Congratulations, you've registered correctly.");
     }
 
-    private static void userDashboard() throws SQLException, ClassNotFoundException {
+    private static void userDashboard() throws Exception {
         int option = 0;
 
         do {
@@ -212,6 +214,7 @@ public class Main {
                 switch(option) {
                     case 1:
                         reservationInfo();
+                        reservationDashboard();
                         break;
                     case 2:
                         break;
@@ -228,6 +231,7 @@ public class Main {
 
     }
 
+    // RESERVATIONS DASHBOARD
     private static void reservationInfo() throws SQLException, ClassNotFoundException {
         System.out.println();
         System.out.println("Total upcoming reservations: " + reservationService.upcomingReservations());
@@ -250,6 +254,28 @@ public class Main {
             System.out.println(reservationsPerTripType.get(tripOption));
         }
 
+    }
+
+    private static void reservationDashboard() throws Exception {
+
+        ReservationOrder[] options = ReservationOrder.values();
+
+        for (int i = 0; i < options.length; i++) {
+            System.out.println((i + 1) + ". " + options[i]);
+        }
+        int option = Input.askInt("Choose: ");
+
+        if (option < 1 || option > options.length) {
+            throw new IllegalArgumentException("Invalid option.");
+        }
+
+        ReservationOrder order = options[option - 1];
+
+        List<ReservationSummary> summaries = reservationService.getReservationSummariesOrderedBy(order);
+
+        for (ReservationSummary summary : summaries) {
+            System.out.println(summary);
+        }
     }
 
 }
