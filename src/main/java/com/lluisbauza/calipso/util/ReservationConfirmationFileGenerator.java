@@ -11,6 +11,8 @@ import org.openpdf.text.pdf.PdfWriter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ReservationConfirmationFileGenerator {
 
@@ -20,16 +22,19 @@ public class ReservationConfirmationFileGenerator {
     public static void generateReservationConfirmation(
             Reservation reservation) throws IOException {
 
-        String fileName = "reservation_confirmation_"
-                + reservation.getReservationCode()
-                + ".pdf";
+        Path outputDirectory = Path.of("generated", "reservations");
+        Files.createDirectories(outputDirectory);
+
+        Path pdfPath = outputDirectory.resolve(
+                "reservation_" + reservation.getReservationCode() + ".pdf"
+        );
 
         Document document = new Document();
 
         try {
             PdfWriter writer = PdfWriter.getInstance(
                     document,
-                    new FileOutputStream(fileName)
+                    new FileOutputStream(pdfPath.toFile())
             );
 
             document.open();

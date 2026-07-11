@@ -8,3 +8,6 @@
 # Compilado Java
 out/
 *.class
+
+# Runtime-generated files
+generated/

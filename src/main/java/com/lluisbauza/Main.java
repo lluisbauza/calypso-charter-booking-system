@@ -12,6 +12,7 @@ import com.lluisbauza.calipso.util.Input;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -241,11 +242,12 @@ public class Main {
         do {
 
             System.out.println();
-            System.out.println("1. Resrvation Statics.");
+            System.out.println("1. Reservation Statics.");
             System.out.println("2. All reservations ordered");
             System.out.println("3. Search Reservations");
-            System.out.println("4. Filter Reservations");
-            System.out.println("5. Exit.");
+            System.out.println("4. Filter Reservations By Field");
+            System.out.println("5. Filter by date");
+            System.out.println("6. Exit.");
 
             try {
                 option = Input.askInt("Chose a number from the menu: ");
@@ -268,13 +270,16 @@ public class Main {
                     filterReservations();
                     break;
                 case 5:
+                    filterReservationsByDate();
+                    break;
+                case 6:
                     System.out.println("Bye");
                     break;
                 default:
-                    System.out.println("Choose from 1 to 5.");
+                    System.out.println("Choose from 1 to 6.");
             }
 
-        } while (option != 4);
+        } while (option != 6);
 
     }
 
@@ -302,6 +307,8 @@ public class Main {
 
     }
 
+    // ORDER, SEARCH, FILTER
+
     private static void getAllReservationsOrderedBy() throws Exception {
 
         ReservationOrder[] options = ReservationOrder.values();
@@ -319,15 +326,7 @@ public class Main {
 
         List<ReservationSummary> summaries = reservationService.listReservationSummariesOrderedBy(order);
 
-        for (ReservationSummary summary : summaries) {
-            System.out.println(summary);
-        }
-
-        System.out.println();
-
-        if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
-            generateReservationConfirmation(summaries);
-        }
+        printAndGenerateReservationConfirmation(summaries);
 
     }
 
@@ -349,25 +348,7 @@ public class Main {
 
         List<ReservationSummary> summaries = reservationService.findReservationSummaryByField(searchField, value);
 
-        for (ReservationSummary summary : summaries) {
-            System.out.println(summary);
-        }
-
-        if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
-            generateReservationConfirmation(summaries);
-        }
-
-    }
-
-    // GENERATE PDF WITH RESERVATION CONFIRMATION
-    private static void generateReservationConfirmation(List<ReservationSummary> list) throws SQLException, IOException, ClassNotFoundException {
-
-        for (ReservationSummary reservationSummary : list) {
-            System.out.println(reservationSummary.getReservationCode());
-        }
-
-        String code = Input.askString("Indicate a code to generate confirmation: ");
-        reservationService.generateReservationConfirmation(code);
+        printAndGenerateReservationConfirmation(summaries);
 
     }
 
@@ -404,16 +385,44 @@ public class Main {
 
         List<ReservationSummary> summaries = reservationService.listReservationSummariesFilteredBy(filterType, filterChoice);
 
+        printAndGenerateReservationConfirmation(summaries);
+
+    }
+
+    public static void filterReservationsByDate() throws SQLException, ClassNotFoundException, IOException {
+        LocalDate start = Input.askLocalDate("Start date (yyyy-MM-dd): ");
+        LocalDate end = Input.askLocalDate("End date (yyyy-MM-dd): ");
+
+        List<ReservationSummary> summaries = reservationService.listReservationSummariesFilteredByDates(start, end);
+
+        printAndGenerateReservationConfirmation(summaries);
+    }
+
+    // GENERATE PDF WITH RESERVATION CONFIRMATION
+    private static void generateReservationConfirmation(List<ReservationSummary> list) throws SQLException, IOException, ClassNotFoundException {
+
+        for (ReservationSummary reservationSummary : list) {
+            System.out.println(reservationSummary.getReservationCode());
+        }
+
+        String code = Input.askString("Indicate a code to generate confirmation: ");
+        reservationService.generateReservationConfirmation(code);
+
+    }
+
+    public static void printAndGenerateReservationConfirmation(List<ReservationSummary> summaries) throws SQLException, IOException, ClassNotFoundException {
+
         for (ReservationSummary summary : summaries) {
             System.out.println(summary);
         }
 
-        if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
-            generateReservationConfirmation(summaries);
+        System.out.println();
+
+        if(!summaries.isEmpty()) {
+            if (Input.askBoolean("Do you want to generate a reservation confirmation: ")) {
+                generateReservationConfirmation(summaries);
+                System.out.println("Confirmation Downloaded.");
+            }
         }
-
-
     }
-
-
 }

@@ -1,5 +1,7 @@
 package com.lluisbauza.calipso.util;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -26,5 +28,17 @@ public class Input {
         return sc.nextBoolean();
     }
 
+    public static LocalDate askLocalDate(String prompt) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print(prompt);
+
+        try {
+            return LocalDate.parse(sc.nextLine());
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "Invalid date. Use the format yyyy-MM-dd."
+            );
+        }
+    }
 
 }

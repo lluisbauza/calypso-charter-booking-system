@@ -198,4 +198,11 @@ public class ReservationService {
 
     }
 
+    public List<ReservationSummary> listReservationSummariesFilteredByDates(LocalDate start, LocalDate end) throws SQLException, ClassNotFoundException {
+
+        return reservationDao.listReservationSummariesFilteredByDates(start, end);
+
+    }
+
+
 }

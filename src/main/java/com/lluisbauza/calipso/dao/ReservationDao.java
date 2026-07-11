@@ -789,5 +789,60 @@ public class ReservationDao implements CrudDao<Reservation> {
         return summaries;
     }
 
+    public List<ReservationSummary> listReservationSummariesFilteredByDates(LocalDate start, LocalDate end)
+            throws SQLException, ClassNotFoundException {
+
+        List<ReservationSummary> summaries = new ArrayList<>();
+
+        String sql = "SELECT r.id_reservation,\n" +
+                "       r.reservation_code,\n" +
+                "       c.name AS client_name,\n" +
+                "       b.boat_name,\n" +
+                "       tt.trip_option,\n" +
+                "       r.reservation_date,\n" +
+                "       r.pax,\n" +
+                "       r.allergies,\n" +
+                "       r.final_price,\n" +
+                "       r.observations,\n" +
+                "       r.reservation_status\n" +
+                "FROM reservations r\n" +
+                "JOIN clients c ON r.id_client = c.id_client\n" +
+                "JOIN trip_types tt ON r.id_trip_type = tt.id_trip_type\n" +
+                "JOIN boats b ON tt.id_boat = b.id_boat\n" +
+                "WHERE r.reservation_date BETWEEN ? AND ?";
+
+        try (
+                Connection con = ConnectionManager.getCon();
+                PreparedStatement pstmt = con.prepareStatement(sql);
+        ) {
+            pstmt.setDate(1, Date.valueOf(start));
+            pstmt.setDate(2, Date.valueOf(end));
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+
+                ReservationStatus reservationStatus =
+                        ReservationStatus.valueOf(rs.getString("reservation_status"));
+
+                ReservationSummary summary = new ReservationSummary(
+                        rs.getInt("id_reservation"),
+                        rs.getString("reservation_code"),
+                        rs.getString("client_name"),
+                        rs.getString("boat_name"),
+                        rs.getString("trip_option"),
+                        rs.getDate("reservation_date").toLocalDate(),
+                        rs.getInt("pax"),
+                        rs.getBoolean("allergies"),
+                        rs.getDouble("final_price"),
+                        rs.getString("observations"),
+                        reservationStatus
+                );
+
+                summaries.add(summary);
+            }
+        }
+
+        return summaries;
+    }
 
 }

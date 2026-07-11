@@ -5,6 +5,8 @@ import com.lluisbauza.calipso.model.User;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public final class PasswordFileGenerator {
 
@@ -13,8 +15,15 @@ public final class PasswordFileGenerator {
 
     public static void generatePasswordFile(User user, String tempPassword) throws IOException {
 
+        Path outputDirectory = Path.of("generated", "passwords");
+        Files.createDirectories(outputDirectory);
+
+        Path outputFile = outputDirectory.resolve(
+                "temporary_password_" + user.getUsername() + ".txt"
+        );
+
         try (
-                FileWriter file = new FileWriter("temporary_password_" + user.getUsername() + ".txt");
+                FileWriter file = new FileWriter(outputFile.toFile());
                 PrintWriter pw = new PrintWriter(file);
         ) {
             pw.println("************************************************************");
