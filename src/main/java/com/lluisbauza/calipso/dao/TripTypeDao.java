@@ -6,12 +6,13 @@ import com.lluisbauza.calipso.util.ConnectionManager;
 
 import java.sql.*;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TripTypeDao implements CrudDao<TripType> {
 
-    public TripTypeDao()throws SQLException, ClassNotFoundException {
+    public TripTypeDao() {
     }
 
     @Override
@@ -47,7 +48,7 @@ public class TripTypeDao implements CrudDao<TripType> {
 
         try (
                 Connection con = ConnectionManager.getCon();
-                PreparedStatement pstmt = con.prepareStatement(sql);
+                PreparedStatement pstmt = con.prepareStatement(sql)
         ) {
             pstmt.setInt(1, id);
 

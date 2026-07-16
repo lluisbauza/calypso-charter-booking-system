@@ -4,7 +4,9 @@ import com.lluisbauza.calipso.dto.ReservationSummary;
 import com.lluisbauza.calipso.enums.ReservationFilter;
 import com.lluisbauza.calipso.enums.ReservationOrder;
 import com.lluisbauza.calipso.enums.ReservationSearchField;
+import com.lluisbauza.calipso.model.Boat;
 import com.lluisbauza.calipso.model.SecurityQuestion;
+import com.lluisbauza.calipso.model.TripType;
 import com.lluisbauza.calipso.model.User;
 import com.lluisbauza.calipso.service.ReservationService;
 import com.lluisbauza.calipso.service.UserService;
@@ -36,6 +38,7 @@ public class Main {
                     }
                     break;
                 case 2:
+                    bookReservation();
                     break;
                 case 3:
                     break;
@@ -55,12 +58,13 @@ public class Main {
 
         System.out.println();
         System.out.println("1. User.");
-        System.out.println("2. .");
+        System.out.println("2. Book Reservation.");
         System.out.println("3. ");
         System.out.println("4. Exit.");
 
         try {
             option = Input.askInt("Chose a number from the menu: ");
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -211,6 +215,7 @@ public class Main {
 
             try {
                 option = Input.askInt("Chose a number from the menu: ");
+                System.out.println();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -425,4 +430,64 @@ public class Main {
             }
         }
     }
+
+    // BOOK RESERVATION
+
+    public static void bookReservation() throws SQLException, ClassNotFoundException {
+
+        int tripTypeId = chooseAvailableTripType();
+
+        System.out.println();
+
+        checkClientExists();
+    }
+
+    public static int chooseAvailableTripType()  throws SQLException, ClassNotFoundException {
+
+        System.out.println("--LIST OF BOATS: ");
+
+        List<Boat> boats = reservationService.listAllBoats();
+
+        for (Boat boat : boats) {
+            System.out.println(boat.getIdBoat() + " - " + boat.getBoatName());
+        }
+
+        int boatId = Input.askInt("Choose a boat id: ");
+
+        LocalDate date = Input.askLocalDate("Chosen date (yyyy-MM-dd): ");
+
+        List<TripType> tripTypes = reservationService.listAvailableTripTypesFromBoatAndDate(boatId, date);
+
+        for (TripType tripType : tripTypes) {
+            System.out.println(tripType.getIdTripType() + " - " + tripType.getTripOption());
+        }
+
+        return Input.askInt("Choose a trip type id: ");
+
+    }
+
+    public static void checkClientExists() throws SQLException, ClassNotFoundException {
+
+        String mail = Input.askString("Mail: ");
+
+        if (reservationService.checkClientExists(mail)) {
+
+        } else {
+            addClient(mail);
+        }
+
+
+    }
+
+    public static void addClient(String mail) throws SQLException, ClassNotFoundException {
+
+        String name = Input.askString("Full name: ");
+        String phone = Input.askString("Phone number: ");
+
+        reservationService.createClient(mail, name, phone);
+
+    }
+
+
+
 }

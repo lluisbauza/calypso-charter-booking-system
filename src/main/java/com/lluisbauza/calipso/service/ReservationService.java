@@ -1,18 +1,21 @@
 package com.lluisbauza.calipso.service;
 
 import com.lluisbauza.calipso.dao.BoatDao;
+import com.lluisbauza.calipso.dao.ClientDao;
 import com.lluisbauza.calipso.dao.ReservationDao;
+import com.lluisbauza.calipso.dao.TripTypeDao;
 import com.lluisbauza.calipso.dto.ReservationSummary;
 import com.lluisbauza.calipso.enums.ReservationFilter;
 import com.lluisbauza.calipso.enums.ReservationOrder;
 import com.lluisbauza.calipso.enums.ReservationSearchField;
 import com.lluisbauza.calipso.enums.ReservationStatus;
 import com.lluisbauza.calipso.model.Boat;
+import com.lluisbauza.calipso.model.Client;
 import com.lluisbauza.calipso.model.Reservation;
+import com.lluisbauza.calipso.model.TripType;
 import com.lluisbauza.calipso.util.ReservationConfirmationFileGenerator;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -203,6 +206,54 @@ public class ReservationService {
         return reservationDao.listReservationSummariesFilteredByDates(start, end);
 
     }
+
+    // RESERVATION CREATION
+
+    public List<Boat> listAllBoats() throws SQLException, ClassNotFoundException {
+
+        BoatDao boatDao = new BoatDao();
+
+        return boatDao.listAll();
+
+    }
+
+    public List<TripType> listAvailableTripTypesFromBoatAndDate(int boatId, LocalDate date) throws SQLException, ClassNotFoundException {
+
+        BoatDao boatDao = new BoatDao();
+
+        Boat boat = boatDao.read(boatId);
+
+        TripTypeDao tripTypeDao = new TripTypeDao();
+
+        return tripTypeDao.listAvailableTripTypesFromBoatAndDate(boat, date);
+
+    }
+
+    public boolean checkClientExists(String mail) throws SQLException, ClassNotFoundException {
+
+        boolean exists = false;
+
+        ClientDao clientDao = new ClientDao();
+
+        if (clientDao.findByMail(mail) != null) {
+            exists = true;
+        }
+
+        return exists;
+
+    }
+
+    public void createClient(String mail, String name, String phone) throws SQLException, ClassNotFoundException {
+
+        Client client = new Client(mail, name, phone);
+        ClientDao clientDao = new ClientDao();
+
+        clientDao.create(client);
+
+    }
+
+    public void createReservation() {}
+
 
 
 }
