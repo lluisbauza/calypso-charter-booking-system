@@ -1,5 +1,6 @@
 package com.lluisbauza.calypso.model;
 
+import com.lluisbauza.calypso.enums.TripType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 
 @Entity
 @Getter @Setter
@@ -22,12 +22,14 @@ public class Trip {
     @ManyToOne
     private Boat boat;
 
+    @Enumerated(EnumType.STRING)
+    private TripType type;
+
     @Column(nullable = false)
-    private Duration duration;
+    private Integer durationMinutes;
 
     @Column(nullable = false)
     private BigDecimal price;
-
 
 
 }

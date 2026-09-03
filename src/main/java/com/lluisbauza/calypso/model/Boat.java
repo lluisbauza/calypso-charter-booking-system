@@ -17,8 +17,8 @@ public class Boat {
 
     @Column(nullable = false)
     private Long capacity;
-    
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String boatName;
 
 

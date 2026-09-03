@@ -1,5 +1,6 @@
 package com.lluisbauza.calypso.model;
 
+import com.lluisbauza.calypso.enums.SlotAvailability;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +28,9 @@ public class Slot {
 
     @Column(nullable = false)
     private LocalTime departureTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SlotAvailability availability;
 
 }

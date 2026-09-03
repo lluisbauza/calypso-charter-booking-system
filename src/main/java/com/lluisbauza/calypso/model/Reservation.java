@@ -26,6 +26,7 @@ public class Reservation {
     @ManyToOne
     private Slot slot;
 
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
 }
