@@ -27,9 +27,11 @@ public class SlotService {
     }
 
     public List<LocalDate> findAllAvailableDates() {
-
         return slotRepository.findAllAvailableDates();
+    }
 
+    public List<Slot> findSlotsByDate(LocalDate date) {
+        return slotRepository.findSlotsByDate(date);
     }
 
 }

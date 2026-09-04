@@ -10,6 +10,7 @@
     <h1>Dates</h1>
 
     <div th:each="s: ${slots}" >
+        <p th:text="${s.departureTime}"></p>
         <p th:text="${s.date}"></p>
     </div>
 

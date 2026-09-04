@@ -20,4 +20,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     @Query("SELECT DISTINCT s.date FROM Slot s WHERE s.availability = AVAILABLE")
     List<LocalDate> findAllAvailableDates();
 
+    List<Slot> findSlotsByDate(LocalDate date);
+
 }
