@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Calypso')}"></head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main>
+    <h1>Dates</h1>
+
+    <div th:each="s: ${slots}" >
+        <p th:text="${s.date}"></p>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>
