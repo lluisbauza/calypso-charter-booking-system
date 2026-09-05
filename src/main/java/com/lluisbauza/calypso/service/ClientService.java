@@ -5,6 +5,8 @@ import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.repository.ClientRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ClientService {
 
@@ -13,21 +15,29 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    public Client findClientByEmail(String email) {
+    public Optional<Client> findClientByEmail(String email) {
         return clientRepository.findClientByEmail(email);
     }
 
     public ReservationRequest getReservationRequestBySlotIdAndClientEmail(Long slotId, String email) {
 
-        var client = clientRepository.findClientByEmail(email);
+        Optional<Client> client = clientRepository.findClientByEmail(email);
 
         var reservationRequest = new ReservationRequest();
+
+        if (client.isPresent()) {
+            reservationRequest.setSlotId(slotId);
+            reservationRequest.setEmail(email);
+            reservationRequest.setClientId(client.get().getId());
+            reservationRequest.setFirstName(client.get().getFirstName());
+            reservationRequest.setLastName(client.get().getLastName());
+            reservationRequest.setPhoneNumber(client.get().getPhoneNumber());
+
+            return reservationRequest;
+        }
+
         reservationRequest.setSlotId(slotId);
         reservationRequest.setEmail(email);
-        reservationRequest.setClientId(client.getId());
-        reservationRequest.setFirstName(client.getFirstName());
-        reservationRequest.setLastName(client.getLastName());
-        reservationRequest.setPhoneNumber(client.getPhoneNumber());
 
         return reservationRequest;
 
@@ -35,24 +45,23 @@ public class ClientService {
 
     public Client updateClient(ReservationRequest reservationRequest) {
 
-        Client client = clientRepository.findClientByEmail(reservationRequest.getEmail());
+        Optional<Client> client = clientRepository.findClientByEmail(reservationRequest.getEmail());
 
-        if(client == null) {
-            Client newClient = new Client();
-            newClient.setEmail(reservationRequest.getEmail());
-            newClient.setFirstName(reservationRequest.getFirstName());
-            newClient.setLastName(reservationRequest.getLastName());
-            newClient.setPhoneNumber(reservationRequest.getPhoneNumber());
-            clientRepository.save(newClient);
-            return newClient;
+        if(client.isPresent()) {
+            client.get().setFirstName(reservationRequest.getFirstName());
+            client.get().setLastName(reservationRequest.getLastName());
+            client.get().setPhoneNumber(reservationRequest.getPhoneNumber());
+
+            return clientRepository.save(client.get());
         }
 
-        client.setFirstName(reservationRequest.getFirstName());
-        client.setLastName(reservationRequest.getLastName());
-        client.setPhoneNumber(reservationRequest.getPhoneNumber());
-        clientRepository.save(client);
+        Client newClient = new Client();
+        newClient.setEmail(reservationRequest.getEmail());
+        newClient.setFirstName(reservationRequest.getFirstName());
+        newClient.setLastName(reservationRequest.getLastName());
+        newClient.setPhoneNumber(reservationRequest.getPhoneNumber());
 
-        return client;
+        return clientRepository.save(newClient);
 
     }
 
