@@ -9,10 +9,16 @@
 <main>
     <h1>Available Slots</h1>
 
-    <div th:each="s: ${slots}" >
-        <p th:text="${s.departureTime}"></p>
-        <p th:text="${s.date}"></p>
-    </div>
+    <form th:action="@{/reservation}" method="get">
+        <div th:each="s: ${slots}" >
+            <button type="submit" name="slotId" th:value="${s.id}">
+                <div>
+                    <p th:text="${s.departureTime}"></p>
+                    <p th:text="${s.date}"></p>
+                </div>
+            </button>
+        </div>
+    </form>
 
 </main>
 

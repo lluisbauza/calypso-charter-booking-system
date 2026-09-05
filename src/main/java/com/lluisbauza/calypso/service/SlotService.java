@@ -1,5 +1,6 @@
 package com.lluisbauza.calypso.service;
 
+import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.model.Slot;
 import com.lluisbauza.calypso.repository.SlotRepository;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class SlotService {
         this.tripService = tripService;
     }
 
+    public Slot findById(Long id) {
+        return slotRepository.findById(id).orElse(null);
+    }
     public List<Slot> findAvailableSlotsByBoatId(Long boatId) {
         return slotRepository.findAvailableSlotsByBoatId(boatId);
     }
@@ -32,6 +36,14 @@ public class SlotService {
 
     public List<Slot> findSlotsByDate(LocalDate date) {
         return slotRepository.findSlotsByDate(date);
+    }
+
+    public Slot updateSlotBookedById(Long slotId) {
+
+        var slot = slotRepository.findById(slotId).orElse(null);
+        slot.setAvailability(SlotAvailability.BOOKED);
+        return slotRepository.save(slot);
+
     }
 
 }

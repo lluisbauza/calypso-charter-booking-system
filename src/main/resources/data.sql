@@ -1,3 +1,7 @@
+-- CLIENT
+INSERT INTO client (first_name, last_name, email, phone_number)
+VALUES ('Test', 'Client', 'test@test.com', '600123456');
+
 -- BOATS
 INSERT INTO boat (boat_name, capacity)
 VALUES

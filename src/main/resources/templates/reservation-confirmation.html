@@ -7,16 +7,8 @@
 <header th:replace="~{fragments/header :: header}"></header>
 
 <main>
-    <h1>Dates</h1>
-
-    <div th:each="d: ${dates}" >
-        <form th:action="@{/boats}" method="get">
-            <button type="submit" name="date" th:value="${d}">
-                <span th:text="${d}"></span>
-            </button>
-        </form>
-    </div>
-
+    <h1>Trip confirmed</h1>
+    <p th:text="${reservation.reservationCode}"></p>
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

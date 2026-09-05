@@ -7,15 +7,14 @@
 <header th:replace="~{fragments/header :: header}"></header>
 
 <main>
-    <h1>Dates</h1>
+    <h1>Make a Reservation</h1>
 
-    <div th:each="d: ${dates}" >
-        <form th:action="@{/boats}" method="get">
-            <button type="submit" name="date" th:value="${d}">
-                <span th:text="${d}"></span>
-            </button>
-        </form>
-    </div>
+    <form th:action="@{/reservation/email}" method="get">
+
+        Introduce your email address: <input type="email" name="email"><br>
+        <button type="submit" name="slotId" th:value="${slot.id}">Next</button>
+
+    </form>
 
 </main>
 

@@ -9,7 +9,7 @@
 <main>
     <h1>Available Boats</h1>
 
-    <form th:action="@{/slots}" method="post">
+    <form th:action="@{/slots}" method="get">
             <div th:each="b: ${boats}" >
                 <button type="submit" name="boatId" th:value="${b.id}">
                     <div>
