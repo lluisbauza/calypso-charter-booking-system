@@ -10,7 +10,7 @@
     <h1>Dates</h1>
 
     <div th:each="d: ${dates}" >
-        <form th:action="@{/slots}" method="post">
+        <form th:action="@{/boats}" method="post">
             <button type="submit" name="date" th:value="${d}">
                 <span th:text="${d}"></span>
             </button>

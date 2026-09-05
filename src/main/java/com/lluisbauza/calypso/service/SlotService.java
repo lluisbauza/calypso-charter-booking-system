@@ -18,8 +18,8 @@ public class SlotService {
         this.tripService = tripService;
     }
 
-    public List<Slot> getSlotsByBoatId(Long boatId) {
-        return slotRepository.findByBoatId(boatId);
+    public List<Slot> findAvailableSlotsByBoatId(Long boatId) {
+        return slotRepository.findAvailableSlotsByBoatId(boatId);
     }
 
     public List<Slot> findAvailableSlots() {

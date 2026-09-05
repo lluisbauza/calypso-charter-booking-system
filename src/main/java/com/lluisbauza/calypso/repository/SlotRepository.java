@@ -11,8 +11,8 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
 
     List<Slot> findByTripId(Long tripId);
 
-    @Query("SELECT s FROM Slot s JOIN s.trip t JOIN t.boat b WHERE b.id = :boatId")
-    List<Slot> findByBoatId(Long boatId);
+    @Query("SELECT s FROM Slot s JOIN s.trip t JOIN t.boat b WHERE b.id = :boatId AND s.availability = AVAILABLE")
+    List<Slot> findAvailableSlotsByBoatId(Long boatId);
 
     @Query("SELECT s FROM Slot s WHERE s.availability = AVAILABLE")
     List<Slot> findAvailableSlots();
@@ -21,5 +21,7 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     List<LocalDate> findAllAvailableDates();
 
     List<Slot> findSlotsByDate(LocalDate date);
+
+
 
 }

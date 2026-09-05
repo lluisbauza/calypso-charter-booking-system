@@ -7,7 +7,7 @@
 <header th:replace="~{fragments/header :: header}"></header>
 
 <main>
-    <h1>Dates</h1>
+    <h1>Available Slots</h1>
 
     <div th:each="s: ${slots}" >
         <p th:text="${s.departureTime}"></p>
