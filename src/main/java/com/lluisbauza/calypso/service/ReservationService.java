@@ -1,11 +1,13 @@
 package com.lluisbauza.calypso.service;
 
+import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
 import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.model.Slot;
 import com.lluisbauza.calypso.repository.ReservationRepository;
+import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +22,15 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ClientService clientService;
     private final SlotService slotService;
+    private final EmailService emailService;
+    private final EmailHtmlService emailHtmlService;
 
-    public ReservationService(ReservationRepository reservationRepository, ClientService clientService, SlotService slotService) {
+    public ReservationService(ReservationRepository reservationRepository, ClientService clientService, SlotService slotService, EmailService emailService, EmailHtmlService emailHtmlService) {
         this.reservationRepository = reservationRepository;
         this.clientService = clientService;
         this.slotService = slotService;
-    }
-
-    public Reservation save(Reservation reservation) {
-        return reservationRepository.save(reservation);
+        this.emailService = emailService;
+        this.emailHtmlService = emailHtmlService;
     }
 
     @Transactional
@@ -40,10 +42,42 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setClient(client);
         reservation.setSlot(slot);
+        reservation.setPax(reservationRequest.getPax());
         reservation.setStatus(ReservationStatus.CONFIRMED);
         reservation.setReservationCode(generateReservationCode(reservation));
 
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        if (savedReservation != null) {
+            sendConfirmationHtmlEmail(savedReservation);
+        }
+        return savedReservation;
+
+    }
+
+    public void sendConfirmationEmail(Reservation reservation) {
+
+        String email = reservation.getClient().getEmail();
+        String subject = "Reservation Confirmation - " + reservation.getReservationCode();
+        String body = "You have confirmed the reservation for " + reservation.getReservationCode();
+
+        emailService.sendEmail(email, subject, body);
+
+    }
+
+    public void sendConfirmationHtmlEmail(Reservation reservation) {
+
+        String name = reservation.getClient().getFirstName() +  " " + reservation.getClient().getLastName();
+        String subject = "Reservation Confirmation - " + reservation.getReservationCode();
+
+        ReservationEmailData data = new ReservationEmailData(
+                name,
+                reservation.getReservationCode(),
+                reservation.getSlot().getDate(),
+                reservation.getSlot().getDepartureTime(),
+                reservation.getPax()
+        );
+
+        emailHtmlService.sendEmailWithHtml(reservation.getClient().getEmail(), subject, data);
 
     }
 
@@ -69,11 +103,10 @@ public class ReservationService {
     private boolean reservationCodeExists(String reservationCode) {
 
         List<Reservation> reservations = reservationRepository.findAll();
-        boolean exists = false;
 
         for (Reservation reservation : reservations) {
             if (reservation.getReservationCode().equals(reservationCode)) {
-                exists = true;
+                return true;
             }
         }
 

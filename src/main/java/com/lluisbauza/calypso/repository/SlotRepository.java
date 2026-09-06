@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface SlotRepository extends JpaRepository<Slot, Long> {
 
-    List<Slot> findByTripId(Long tripId);
-
     @Query("SELECT s FROM Slot s JOIN s.trip t JOIN t.boat b WHERE b.id = :boatId AND s.availability = AVAILABLE")
     List<Slot> findAvailableSlotsByBoatId(Long boatId);
 
@@ -21,7 +19,5 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     List<LocalDate> findAllAvailableDates();
 
     List<Slot> findSlotsByDate(LocalDate date);
-
-
 
 }

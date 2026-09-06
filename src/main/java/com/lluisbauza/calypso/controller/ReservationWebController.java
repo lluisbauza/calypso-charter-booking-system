@@ -7,6 +7,7 @@ import com.lluisbauza.calypso.service.BoatService;
 import com.lluisbauza.calypso.service.ClientService;
 import com.lluisbauza.calypso.service.ReservationService;
 import com.lluisbauza.calypso.service.SlotService;
+import jakarta.mail.MessagingException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,13 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 
 @Controller
-public class SlotWebController {
+public class ReservationWebController {
 
     private final SlotService slotService;
     private final BoatService boatService;
     private final ClientService clientService;
     private final ReservationService reservationService;
-    public SlotWebController(
+    public ReservationWebController(
             SlotService slotService,
             BoatService boatService,
             ClientService clientService,
@@ -111,30 +112,5 @@ public class SlotWebController {
         return "reservation-confirmation";
 
     }
-
-
-//    @GetMapping("/slots")
-//    public String getAvailableSlots(Model model) {
-//
-//        var slots = slotService.findAvailableSlots();
-//        model.addAttribute("slots", slots);
-//
-//        return "slots.html";
-//
-//    }
-
-//    @PostMapping("/slots")
-//    public String getDate(
-//            @RequestParam
-//            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-//            LocalDate date,
-//            Model model) {
-//
-//        var slots =  slotService.findSlotsByDate(date);
-//        model.addAttribute("slots", slots);
-//
-//        return "slots.html";
-//
-//    }
 
 }

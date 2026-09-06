@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Reservation Confirmation</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px;">
+
+<div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px;">
+
+  <h1 style="margin-top: 0;">
+    Reservation confirmed
+  </h1>
+
+  <p>
+    Hello <strong th:text="${reservation.clientName}">Client</strong>,
+  </p>
+
+  <p>
+    Your reservation has been successfully confirmed.
+  </p>
+
+  <hr>
+
+  <p>
+    <strong>Reservation code:</strong>
+    <span th:text="${reservation.reservationCode}">ABC123</span>
+  </p>
+
+  <p>
+    <strong>Date:</strong>
+    <span th:text="${reservation.date}">06/09/2026</span>
+  </p>
+
+  <p>
+    <strong>Departure time:</strong>
+    <span th:text="${reservation.departureTime}">10:00</span>
+  </p>
+
+  <p>
+    <strong>Passengers:</strong>
+    <span th:text="${reservation.pax}">4</span>
+  </p>
+
+  <hr>
+
+  <p style="color: #666; font-size: 14px;">
+    Thank you for your reservation.
+  </p>
+
+</div>
+
+</body>
+</html>

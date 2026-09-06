@@ -26,16 +26,8 @@ public class SlotService {
         return slotRepository.findAvailableSlotsByBoatId(boatId);
     }
 
-    public List<Slot> findAvailableSlots() {
-        return slotRepository.findAvailableSlots();
-    }
-
     public List<LocalDate> findAllAvailableDates() {
         return slotRepository.findAllAvailableDates();
-    }
-
-    public List<Slot> findSlotsByDate(LocalDate date) {
-        return slotRepository.findSlotsByDate(date);
     }
 
     public Slot updateSlotBookedById(Long slotId) {

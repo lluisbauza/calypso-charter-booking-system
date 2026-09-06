@@ -29,4 +29,7 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    @Column(nullable = false)
+    private Integer pax;
+
 }

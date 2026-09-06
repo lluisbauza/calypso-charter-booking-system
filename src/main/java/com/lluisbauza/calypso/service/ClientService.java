@@ -15,10 +15,6 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    public Optional<Client> findClientByEmail(String email) {
-        return clientRepository.findClientByEmail(email);
-    }
-
     public ReservationRequest getReservationRequestBySlotIdAndClientEmail(Long slotId, String email) {
 
         Optional<Client> client = clientRepository.findClientByEmail(email);
