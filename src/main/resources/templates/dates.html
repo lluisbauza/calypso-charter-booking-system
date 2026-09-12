@@ -9,16 +9,53 @@
 <main>
     <h1>Dates</h1>
 
-    <div th:each="d: ${dates}" >
-        <form th:action="@{/boats}" method="get">
-            <button type="submit" name="date" th:value="${d}">
-                <span th:text="${d}"></span>
-            </button>
-        </form>
-    </div>
+<!--    <div th:each="d : ${dates}">-->
+<!--        <button-->
+<!--                type="button"-->
+<!--                th:text="${d}"-->
+<!--                th:attr="hx-get=@{/boats/fragment(date=${d})}"-->
+<!--                hx-target="#boats-container"-->
+<!--                hx-swap="innerHTML">-->
+<!--        </button>-->
+<!--    </div>-->
 
+    <table>
+        <thead>
+        <tr>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="week : ${weeks}">
+            <td th:each="day : ${week}">
+                <button
+                        th:if="${day != null and dates.contains(day)}"
+                        type="button"
+                        th:text="${day.dayOfMonth}"
+                        th:attr="hx-get=@{/boats/fragment(date=${day})}"
+                        hx-target="#boats-container"
+                        hx-swap="innerHTML">
+                </button>
+
+                <span
+                        th:if="${day != null and !dates.contains(day)}"
+                        th:text="${day.dayOfMonth}">
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="boats-container"></div>
+    <div id="slots-container"></div>
 </main>
-
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>

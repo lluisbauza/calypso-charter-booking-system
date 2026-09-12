@@ -3,11 +3,7 @@ package com.lluisbauza.calypso.controller;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.model.Reservation;
-import com.lluisbauza.calypso.service.BoatService;
-import com.lluisbauza.calypso.service.ClientService;
-import com.lluisbauza.calypso.service.ReservationService;
-import com.lluisbauza.calypso.service.SlotService;
-import jakarta.mail.MessagingException;
+import com.lluisbauza.calypso.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,22 +21,27 @@ public class ReservationWebController {
     private final BoatService boatService;
     private final ClientService clientService;
     private final ReservationService reservationService;
+    private final CalendarService calendarService;
     public ReservationWebController(
             SlotService slotService,
             BoatService boatService,
             ClientService clientService,
-            ReservationService reservationService) {
+            ReservationService reservationService, CalendarService calendarService) {
         this.slotService = slotService;
         this.boatService = boatService;
         this.clientService = clientService;
         this.reservationService = reservationService;
+        this.calendarService = calendarService;
     }
 
     @GetMapping("/dates")
     public String getAvailableDates(Model model) {
 
         var dates = slotService.findAllAvailableDates();
+        var weeks = calendarService.generateMonth(2026, 9);
+
         model.addAttribute("dates", dates);
+        model.addAttribute("weeks", weeks);
 
         return "dates";
 
@@ -63,10 +64,11 @@ public class ReservationWebController {
     @GetMapping("/slots")
     public String getAvailableSlotsByBoatId(
             @RequestParam Long boatId,
+            @RequestParam LocalDate date,
             Model model
     ) {
 
-        var slots = slotService.findAvailableSlotsByBoatId(boatId);
+        var slots = slotService.findAvailableSlotsByBoatIdAndDate(boatId, date);
         model.addAttribute("slots", slots);
 
         return "slots";
@@ -112,5 +114,38 @@ public class ReservationWebController {
         return "reservation-confirmation";
 
     }
+
+    @GetMapping("/boats/fragment")
+    public String getAvailableBoatsFragment(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
+            Model model) {
+
+        var boats = boatService.findBoatAvailableByDate(
+                date,
+                SlotAvailability.AVAILABLE
+        );
+
+        model.addAttribute("boats", boats);
+        model.addAttribute("date", date);
+
+        return "fragments/boats-fragment :: boats";
+    }
+
+    @GetMapping("/slots/fragment")
+    public String getAvailableSlotsFragment(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
+            @RequestParam Long boatId,
+            Model model) {
+
+        var slots = slotService.findAvailableSlotsByBoatIdAndDate(boatId, date);
+        model.addAttribute("slots", slots);
+
+        return "fragments/slots-fragment :: slots";
+    }
+
 
 }

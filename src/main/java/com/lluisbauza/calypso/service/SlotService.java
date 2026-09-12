@@ -22,8 +22,8 @@ public class SlotService {
     public Slot findById(Long id) {
         return slotRepository.findById(id).orElse(null);
     }
-    public List<Slot> findAvailableSlotsByBoatId(Long boatId) {
-        return slotRepository.findAvailableSlotsByBoatId(boatId);
+    public List<Slot> findAvailableSlotsByBoatIdAndDate(Long boatId, LocalDate date) {
+        return slotRepository.findAvailableSlotsByBoatIdAndDate(boatId, date);
     }
 
     public List<LocalDate> findAllAvailableDates() {

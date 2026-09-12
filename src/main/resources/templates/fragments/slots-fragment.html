@@ -1,0 +1,15 @@
+<div th:fragment="slots">
+  <h2>Available Slots</h2>
+
+  <form th:action="@{/reservation}" method="get">
+
+    <div th:each="s : ${slots}">
+      <button type="submit" name="slotId" th:value="${s.id}">
+        <div>
+          <p th:text="${s.departureTime}"></p>
+          <p th:text="${s.date}"></p>
+        </div>
+      </button>
+    </div>
+  </form>
+</div>

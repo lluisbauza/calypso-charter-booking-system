@@ -1,0 +1,14 @@
+<div th:fragment="boats">
+  <h2>Available Boats</h2>
+  <div th:each="b : ${boats}">
+    <button
+            type="button"
+            th:text="${b.boatName}"
+            th:attr="hx-get=@{/slots/fragment(boatId=${b.id}, date=${date})}"
+            hx-target="#slots-container"
+            hx-swap="innerHTML">
+    </button>
+  </div>
+</div>
+
+
