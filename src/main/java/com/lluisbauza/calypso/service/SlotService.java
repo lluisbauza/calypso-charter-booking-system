@@ -12,11 +12,9 @@ import java.util.List;
 public class SlotService {
 
     private final SlotRepository slotRepository;
-    private final TripService tripService;
 
     public SlotService(SlotRepository slotRepository, TripService tripService) {
         this.slotRepository = slotRepository;
-        this.tripService = tripService;
     }
 
     public Slot findById(Long id) {

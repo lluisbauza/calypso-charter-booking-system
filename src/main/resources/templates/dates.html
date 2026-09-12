@@ -9,15 +9,17 @@
 <main>
     <h1>Dates</h1>
 
-<!--    <div th:each="d : ${dates}">-->
-<!--        <button-->
-<!--                type="button"-->
-<!--                th:text="${d}"-->
-<!--                th:attr="hx-get=@{/boats/fragment(date=${d})}"-->
-<!--                hx-target="#boats-container"-->
-<!--                hx-swap="innerHTML">-->
-<!--        </button>-->
-<!--    </div>-->
+    <div>
+        <a th:href="@{/dates(year=${previousYear}, month=${previousMonth})}">
+            ← Previous
+        </a>
+
+        <strong th:text="${month + ' ' + year}"></strong>
+
+        <a th:href="@{/dates(year=${nextYear}, month=${nextMonth})}">
+            Next →
+        </a>
+    </div>
 
     <table>
         <thead>

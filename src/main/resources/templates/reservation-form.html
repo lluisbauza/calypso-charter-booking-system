@@ -11,11 +11,11 @@
 
     <form th:action="@{/reservation/email}" method="post" th:object="${reservationRequest}">
 
-        Email Address: <input type="email" th:field="*{email}"><br>
-        First Name: <input type="text" th:field="*{firstName}"><br>
-        Last Name: <input type="text" th:field="*{lastName}"><br>
-        Phone Number: <input type="text" th:field="*{phoneNumber}"><br>
-        Pax: <input type="number" th:field="*{pax}"><br>
+        Email Address: <input type="email" th:field="*{email}" required><br>
+        First Name: <input type="text" th:field="*{firstName}" required><br>
+        Last Name: <input type="text" th:field="*{lastName}" required><br>
+        Phone Number: <input type="text" th:field="*{phoneNumber}" required><br>
+        Pax: <input type="number" th:field="*{pax}" required><br>
         <input type="hidden" th:field="*{slotId}">
 
         <button type="submit">Book trip</button>

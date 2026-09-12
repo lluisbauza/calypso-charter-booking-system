@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
 
 @Controller
 public class ReservationWebController {
@@ -35,43 +38,45 @@ public class ReservationWebController {
     }
 
     @GetMapping("/dates")
-    public String getAvailableDates(Model model) {
+    public String getAvailableDates(
+            @RequestParam(required = false) Year year,
+            @RequestParam(required = false) Month month,
+            Model model) {
+
+        LocalDate today = LocalDate.now();
+
+        if (year == null) {
+            year = Year.now();
+        }
+
+        if (month == null) {
+            month = today.getMonth();
+        }
+
+        var current = YearMonth.of(year.getValue(), month);
+        var previous = current.minusMonths(1);
+        var next = current.plusMonths(1);
 
         var dates = slotService.findAllAvailableDates();
-        var weeks = calendarService.generateMonth(2026, 9);
+        var weeks = calendarService.generateMonth(
+                current.getYear(),
+                current.getMonthValue()
+        );
 
         model.addAttribute("dates", dates);
         model.addAttribute("weeks", weeks);
 
+        model.addAttribute("year", current.getYear());
+        model.addAttribute("month", current.getMonth());
+
+        model.addAttribute("previousYear", previous.getYear());
+        model.addAttribute("previousMonth", previous.getMonth());
+
+        model.addAttribute("nextYear", next.getYear());
+        model.addAttribute("nextMonth", next.getMonth());
+
         return "dates";
 
-    }
-
-    @GetMapping("/boats")
-    public String getAvailableBoats(
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate date,
-            Model model) {
-
-        var boats =  boatService.findBoatAvailableByDate(date, SlotAvailability.AVAILABLE);
-        model.addAttribute("boats", boats);
-
-        return "boats";
-
-    }
-
-    @GetMapping("/slots")
-    public String getAvailableSlotsByBoatId(
-            @RequestParam Long boatId,
-            @RequestParam LocalDate date,
-            Model model
-    ) {
-
-        var slots = slotService.findAvailableSlotsByBoatIdAndDate(boatId, date);
-        model.addAttribute("slots", slots);
-
-        return "slots";
     }
 
     @GetMapping("/reservation")

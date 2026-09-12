@@ -7,7 +7,6 @@ import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.model.Slot;
 import com.lluisbauza.calypso.repository.ReservationRepository;
-import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +21,12 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ClientService clientService;
     private final SlotService slotService;
-    private final EmailService emailService;
     private final EmailHtmlService emailHtmlService;
 
-    public ReservationService(ReservationRepository reservationRepository, ClientService clientService, SlotService slotService, EmailService emailService, EmailHtmlService emailHtmlService) {
+    public ReservationService(ReservationRepository reservationRepository, ClientService clientService, SlotService slotService, EmailHtmlService emailHtmlService) {
         this.reservationRepository = reservationRepository;
         this.clientService = clientService;
         this.slotService = slotService;
-        this.emailService = emailService;
         this.emailHtmlService = emailHtmlService;
     }
 
@@ -51,16 +48,6 @@ public class ReservationService {
             sendConfirmationHtmlEmail(savedReservation);
         }
         return savedReservation;
-
-    }
-
-    public void sendConfirmationEmail(Reservation reservation) {
-
-        String email = reservation.getClient().getEmail();
-        String subject = "Reservation Confirmation - " + reservation.getReservationCode();
-        String body = "You have confirmed the reservation for " + reservation.getReservationCode();
-
-        emailService.sendEmail(email, subject, body);
 
     }
 
