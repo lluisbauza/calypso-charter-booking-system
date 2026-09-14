@@ -1,5 +1,6 @@
 package com.lluisbauza.calypso.controller;
 
+import com.lluisbauza.calypso.dto.ReservationEditRequest;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.model.Reservation;
@@ -88,7 +89,7 @@ public class ReservationWebController {
         var slot = slotService.findById(slotId);
         model.addAttribute("slot", slot);
 
-        return "email-form";
+        return "fragments/email-form";
     }
 
     @GetMapping("/reservation/email")
@@ -152,5 +153,23 @@ public class ReservationWebController {
         return "fragments/slots-fragment :: slots";
     }
 
+
+    @GetMapping("/edit")
+    public String editReservation(Model model) {
+        return "edit-form";
+    }
+
+
+    @PostMapping("/edit")
+    public String returnReservation(
+            @ModelAttribute ReservationEditRequest reservationEditRequest,
+            Model model
+    ) {
+
+        Reservation reservation = reservationService.getReservationByCodeAndEmail(reservationEditRequest.getReservationCode(), reservationEditRequest.getEmail());
+        model.addAttribute("reservation", reservation);
+
+        return "fragments/reservation-found";
+    }
 
 }

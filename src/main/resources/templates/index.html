@@ -16,6 +16,12 @@
             Check availability
         </button>
     </form>
+    <form th:action="@{/edit}" method="get">
+        <button type="submit">
+            Edit reservation
+        </button>
+    </form>
+
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

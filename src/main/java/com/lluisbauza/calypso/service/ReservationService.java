@@ -111,4 +111,8 @@ public class ReservationService {
         return sb.toString();
     }
 
+    public Reservation getReservationByCodeAndEmail(String reservationCode, String email) {
+        return reservationRepository.findByCodeAndEmail(reservationCode, email);
+    }
+
 }
