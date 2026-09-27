@@ -1,6 +1,7 @@
 package com.lluisbauza.calypso.service;
 
 import com.lluisbauza.calypso.enums.SlotAvailability;
+import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.model.Slot;
 import com.lluisbauza.calypso.repository.SlotRepository;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,10 @@ public class SlotService {
         slot.setAvailability(SlotAvailability.BOOKED);
         return slotRepository.save(slot);
 
+    }
+
+    public void addReservationSlot(Reservation reservation) {
+        reservation.getSlot();
     }
 
 }

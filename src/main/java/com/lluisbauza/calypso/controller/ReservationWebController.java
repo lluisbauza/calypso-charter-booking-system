@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
+import java.time.*;
 
 @Controller
 public class ReservationWebController {
@@ -42,6 +40,7 @@ public class ReservationWebController {
     public String getAvailableDates(
             @RequestParam(required = false) Year year,
             @RequestParam(required = false) Month month,
+            @RequestParam(required = false) Long reservationId,
             Model model) {
 
         LocalDate today = LocalDate.now();
@@ -64,6 +63,10 @@ public class ReservationWebController {
                 current.getMonthValue()
         );
 
+        if (reservationId != null) {
+            model.addAttribute("reservationId", reservationId);
+        }
+
         model.addAttribute("dates", dates);
         model.addAttribute("weeks", weeks);
 
@@ -77,6 +80,29 @@ public class ReservationWebController {
         model.addAttribute("nextMonth", next.getMonth());
 
         return "dates";
+
+    }
+
+    @GetMapping("/boats/fragment")
+    public String getAvailableBoatsFragment(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
+            @RequestParam(required = false) Long reservationId,
+            Model model) {
+
+        var boats = boatService.findBoatAvailableByDate(
+                date,
+                SlotAvailability.AVAILABLE
+        );
+
+        model.addAttribute("boats", boats);
+        model.addAttribute("date", date);
+        if (reservationId != null) {
+            model.addAttribute("reservationId", reservationId);
+        }
+
+        return "fragments/boats-fragment :: boats";
 
     }
 
@@ -121,24 +147,6 @@ public class ReservationWebController {
 
     }
 
-    @GetMapping("/boats/fragment")
-    public String getAvailableBoatsFragment(
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate date,
-            Model model) {
-
-        var boats = boatService.findBoatAvailableByDate(
-                date,
-                SlotAvailability.AVAILABLE
-        );
-
-        model.addAttribute("boats", boats);
-        model.addAttribute("date", date);
-
-        return "fragments/boats-fragment :: boats";
-    }
-
     @GetMapping("/slots/fragment")
     public String getAvailableSlotsFragment(
             @RequestParam
@@ -159,17 +167,38 @@ public class ReservationWebController {
         return "edit-form";
     }
 
-
-    @PostMapping("/edit")
-    public String returnReservation(
+    @PostMapping("/edit/search")
+    public String findReservation(
             @ModelAttribute ReservationEditRequest reservationEditRequest,
+            RedirectAttributes redirectAttributes,
             Model model
     ) {
 
         Reservation reservation = reservationService.getReservationByCodeAndEmail(reservationEditRequest.getReservationCode(), reservationEditRequest.getEmail());
-        model.addAttribute("reservation", reservation);
 
-        return "fragments/reservation-found";
+        if (reservation == null) {
+            model.addAttribute("notFound", "Reservation not found.");
+            return "fragments/edit-options";
+        }
+
+        model.addAttribute("reservationId", reservation.getId());
+
+        return "fragments/edit-options";
+
     }
+
+    @GetMapping("/edit/options/fragment")
+    public String getModifyOptions(
+            @RequestParam Long reservationId,
+            Model model) {
+
+        if (reservationId != null) {
+            model.addAttribute("reservationId", reservationId);
+        }
+
+        return "";
+
+    }
+
 
 }

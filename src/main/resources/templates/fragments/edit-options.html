@@ -1,0 +1,27 @@
+<div th:fragment="edit-options">
+  <div th:if="${notFound != null}">
+    <p th:text="${notFound}"></p>
+  </div>
+
+  <div th:if="${reservationId != null}">
+
+    <h2>Manage your reservation</h2>
+    <p th:text="${reservationId}"></p>
+
+    <form th:action="@{/edit/contact}" method="get">
+      <button type="submit">
+        Edit contact information
+      </button>
+    </form>
+    <form th:action="@{/edit/date}" method="get">
+      <button type="submit">
+        Edit date or departure time
+      </button>
+    </form>
+    <form th:action="@{/edit/cancel}" method="get">
+      <button type="submit">
+        Cancel a reservation
+      </button>
+    </form>
+  </div>
+</div>

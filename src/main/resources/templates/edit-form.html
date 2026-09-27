@@ -4,13 +4,15 @@
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
 <main>
-  <div th:fragment="edit">
-    <form th:action="@{/edit}" method="post">
-      Email: <input type="email" name="email"><br>
-      Reservation Code: <input type="text" name="reservationCode"><br>
-      <button type="submit">Next</button>
-    </form>
-  </div>
+  <form th:action="@{/edit/search}" method="post"
+        hx-post="/edit/search"
+        hx-target="#options-container"
+        hx-swap="innerHTML">
+    Email: <input type="email" name="email"><br>
+    Reservation Code: <input type="text" name="reservationCode"><br>
+    <button type="submit">Next</button>
+  </form>
+  <div id="options-container"></div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 

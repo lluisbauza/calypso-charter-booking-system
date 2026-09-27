@@ -10,13 +10,13 @@
     <h1>Dates</h1>
 
     <div>
-        <a th:href="@{/dates(year=${previousYear}, month=${previousMonth})}">
+        <a th:href="@{/dates(year=${previousYear}, month=${previousMonth}, reservationId=${reservationId})}">
             ← Previous
         </a>
 
         <strong th:text="${month + ' ' + year}"></strong>
 
-        <a th:href="@{/dates(year=${nextYear}, month=${nextMonth})}">
+        <a th:href="@{/dates(year=${nextYear}, month=${nextMonth}, reservationId=${reservationId})}">
             Next →
         </a>
     </div>
@@ -41,7 +41,7 @@
                         th:if="${day != null and dates.contains(day)}"
                         type="button"
                         th:text="${day.dayOfMonth}"
-                        th:attr="hx-get=@{/boats/fragment(date=${day})}"
+                        th:attr="hx-get=@{/boats/fragment(date=${day}, reservationId=${reservationId})}"
                         hx-target="#boats-container"
                         hx-swap="innerHTML">
                 </button>
@@ -55,6 +55,7 @@
         </tbody>
     </table>
 
+    <p th:if="${reservationId != null}" th:text="${reservationId}"></p>
     <div id="boats-container"></div>
     <div id="slots-container"></div>
 </main>
