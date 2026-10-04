@@ -1,8 +1,9 @@
 package com.lluisbauza.calypso.controller;
 
-import com.lluisbauza.calypso.dto.ReservationEditRequest;
+import com.lluisbauza.calypso.dto.ReservationSearchRequest;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
+import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -65,6 +66,13 @@ public class ReservationWebController {
 
         if (reservationId != null) {
             model.addAttribute("reservationId", reservationId);
+
+            String reservationCode = reservationService.getReservationCode(reservationId);
+            model.addAttribute("reservationCode", reservationCode);
+
+            LocalDate reservedDate = reservationService.getReservationDate(reservationId);
+            model.addAttribute("reservedDate", reservedDate);
+            dates.add(reservedDate);
         }
 
         model.addAttribute("dates", dates);
@@ -96,27 +104,69 @@ public class ReservationWebController {
                 SlotAvailability.AVAILABLE
         );
 
-        model.addAttribute("boats", boats);
-        model.addAttribute("date", date);
         if (reservationId != null) {
             model.addAttribute("reservationId", reservationId);
+            String reservationCode = reservationService.getReservationCode(reservationId);
+            model.addAttribute("reservationCode", reservationCode);
+
+            Boat reservedBoat = reservationService.getBoatByReservationId(reservationId);
+            model.addAttribute("reservedBoat", reservedBoat);
+            boats.add(reservedBoat);
         }
+
+        model.addAttribute("boats", boats);
+        model.addAttribute("date", date);
 
         return "fragments/boats-fragment :: boats";
 
     }
 
+    @GetMapping("/slots/fragment")
+    public String getAvailableSlotsFragment(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
+            @RequestParam Long boatId,
+            @RequestParam(required = false) Long reservationId,
+            Model model) {
+
+        var slots = slotService.findAvailableSlotsByBoatIdAndDate(boatId, date);
+
+        if (reservationId != null) {
+            model.addAttribute("reservationId", reservationId);
+
+            String reservationCode = reservationService.getReservationCode(reservationId);
+            model.addAttribute("reservationCode", reservationCode);
+
+            var reservedSlot = reservationService.getSlotByReservationId(reservationId);
+            model.addAttribute("reservedSlot", reservedSlot);
+            slots.add(reservedSlot);
+        }
+
+        model.addAttribute("slots", slots);
+
+        return "fragments/slots-fragment :: slots";
+    }
+
     @GetMapping("/reservation")
     public String bookReservation(
             @RequestParam Long slotId,
+            @RequestParam(required = false) Long reservationId,
             Model model
     ) {
 
         var slot = slotService.findById(slotId);
+
         model.addAttribute("slot", slot);
+
+        if (reservationId != null) {
+            model.addAttribute("reservationId", reservationId);
+
+        }
 
         return "fragments/email-form";
     }
+
 
     @GetMapping("/reservation/email")
     public String checkEmail(
@@ -147,21 +197,6 @@ public class ReservationWebController {
 
     }
 
-    @GetMapping("/slots/fragment")
-    public String getAvailableSlotsFragment(
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate date,
-            @RequestParam Long boatId,
-            Model model) {
-
-        var slots = slotService.findAvailableSlotsByBoatIdAndDate(boatId, date);
-        model.addAttribute("slots", slots);
-
-        return "fragments/slots-fragment :: slots";
-    }
-
-
     @GetMapping("/edit")
     public String editReservation(Model model) {
         return "edit-form";
@@ -169,12 +204,12 @@ public class ReservationWebController {
 
     @PostMapping("/edit/search")
     public String findReservation(
-            @ModelAttribute ReservationEditRequest reservationEditRequest,
+            @ModelAttribute ReservationSearchRequest reservationSearchRequest,
             RedirectAttributes redirectAttributes,
             Model model
     ) {
 
-        Reservation reservation = reservationService.getReservationByCodeAndEmail(reservationEditRequest.getReservationCode(), reservationEditRequest.getEmail());
+        Reservation reservation = reservationService.getReservationByCodeAndEmail(reservationSearchRequest.getReservationCode(), reservationSearchRequest.getEmail());
 
         if (reservation == null) {
             model.addAttribute("notFound", "Reservation not found.");
@@ -187,18 +222,16 @@ public class ReservationWebController {
 
     }
 
-    @GetMapping("/edit/options/fragment")
+    @GetMapping("/edit/options/date")
     public String getModifyOptions(
             @RequestParam Long reservationId,
-            Model model) {
+            Model model, RedirectAttributes redirectAttributes) {
 
-        if (reservationId != null) {
-            model.addAttribute("reservationId", reservationId);
-        }
 
-        return "";
+        redirectAttributes.addAttribute("reservationId", reservationId);
+
+        return "redirect:/dates";
 
     }
-
 
 }

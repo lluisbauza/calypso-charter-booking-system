@@ -8,17 +8,20 @@
     <h2>Manage your reservation</h2>
     <p th:text="${reservationId}"></p>
 
-    <form th:action="@{/edit/contact}" method="get">
+    <form th:action="@{/edit/options/contact}" method="get">
+      <input type="hidden" name="reservationId" th:value="${reservationId}">
       <button type="submit">
         Edit contact information
       </button>
     </form>
-    <form th:action="@{/edit/date}" method="get">
+    <form th:action="@{/edit/options/date}" method="get">
+      <input type="hidden" name="reservationId" th:value="${reservationId}">
       <button type="submit">
         Edit date or departure time
       </button>
     </form>
-    <form th:action="@{/edit/cancel}" method="get">
+    <form th:action="@{/edit/options/cancel}" method="get">
+      <input type="hidden" name="reservationId" th:value="${reservationId}">
       <button type="submit">
         Cancel a reservation
       </button>

@@ -3,6 +3,8 @@ package com.lluisbauza.calypso.service;
 import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
+import com.lluisbauza.calypso.exception.ReservationNotFoundException;
+import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.model.Slot;
@@ -10,6 +12,7 @@ import com.lluisbauza.calypso.repository.ReservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
@@ -115,6 +118,54 @@ public class ReservationService {
         return reservationRepository.findByCodeAndEmail(reservationCode, email);
     }
 
+    public LocalDate getReservationDate(Long reservationId) {
+
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+
+        return reservation.getSlot().getDate();
+    }
+
+    public String getReservationCode(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        return reservation.getReservationCode();
+    }
+
+    public Boat getBoatByReservationId(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+
+        return reservation.getSlot().getTrip().getBoat();
+    }
+
+    public Slot getSlotByReservationId(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+
+        return reservation.getSlot();
+    }
+
+    public Reservation changeReservationSlot(Long reservationId, Slot slot) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        reservation.setSlot(slot);
+        reservationRepository.save(reservation);
+        return reservation;
+    }
 
 
 }

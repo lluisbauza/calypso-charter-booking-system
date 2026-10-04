@@ -3,7 +3,14 @@
 
   <form th:action="@{/reservation}" method="get">
 
-    <div th:each="s : ${slots}">
+    <input
+            th:if="${reservationId != null}"
+            type="hidden"
+            name="reservationId"
+            th:value="${reservationId}"
+    >
+    <div th:each="s : ${slots}"
+         th:classappend="${s != null and s.equals(reservedSlot)} ? 'reserved'">
       <button type="submit" name="slotId" th:value="${s.id}">
         <div>
           <p th:text="${s.departureTime}"></p>
@@ -12,4 +19,6 @@
       </button>
     </div>
   </form>
+
+  <p th:if="${reservationCode != null}" th:text="${reservationCode}"></p>
 </div>

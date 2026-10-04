@@ -2,6 +2,7 @@ package com.lluisbauza.calypso.service;
 
 import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.model.Boat;
+import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.repository.BoatRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,4 +21,5 @@ public class BoatService {
     public List<Boat> findBoatAvailableByDate(LocalDate date, SlotAvailability availability) {
         return boatRepository.findBoatAvailableByDate(date, availability);
     }
+
 }

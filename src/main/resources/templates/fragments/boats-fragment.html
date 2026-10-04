@@ -1,15 +1,16 @@
 <div th:fragment="boats">
   <h2>Available Boats</h2>
-  <div th:each="b : ${boats}">
+  <div th:each="b : ${boats}"
+       th:classappend="${b != null and b.equals(reservedBoat)} ? 'reserved'">
     <button
             type="button"
             th:text="${b.boatName}"
-            th:attr="hx-get=@{/slots/fragment(boatId=${b.id}, date=${date})}"
+            th:attr="hx-get=@{/slots/fragment(boatId=${b.id}, date=${date}, reservationId=${reservationId})}"
             hx-target="#slots-container"
             hx-swap="innerHTML">
     </button>
   </div>
-  <p th:if="${reservationId != null}" th:text="${reservationId}"></p>
+  <p th:if="${reservationCode != null}" th:text="${reservationCode}"></p>
 
 </div>
 

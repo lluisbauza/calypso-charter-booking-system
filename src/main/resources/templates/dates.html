@@ -36,7 +36,8 @@
 
         <tbody>
         <tr th:each="week : ${weeks}">
-            <td th:each="day : ${week}">
+            <td th:each="day : ${week}"
+                th:classappend="${day != null and day.equals(reservedDate)} ? 'reserved'">
                 <button
                         th:if="${day != null and dates.contains(day)}"
                         type="button"
@@ -55,7 +56,7 @@
         </tbody>
     </table>
 
-    <p th:if="${reservationId != null}" th:text="${reservationId}"></p>
+    <p th:if="${reservationCode != null}" th:text="${reservationCode}"></p>
     <div id="boats-container"></div>
     <div id="slots-container"></div>
 </main>
