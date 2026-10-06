@@ -1,5 +1,6 @@
 package com.lluisbauza.calypso.service;
 
+import com.lluisbauza.calypso.dto.ReservationBasicInfo;
 import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
@@ -167,5 +168,44 @@ public class ReservationService {
         return reservation;
     }
 
+    public ReservationBasicInfo getReservationBasicInfo(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        return new ReservationBasicInfo(
+                reservation.getReservationCode(),
+                reservation.getSlot().getDate(),
+                reservation.getSlot().getDepartureTime(),
+                reservation.getSlot().getTrip().getBoat().getBoatName()
+        );
+    }
+
+    public ReservationBasicInfo getNewReservationInfo(Long reservationId, Long newSlotId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        Slot slot = slotService.findById(newSlotId);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        return new ReservationBasicInfo(
+                reservation.getReservationCode(),
+                slot.getDate(),
+                slot.getDepartureTime(),
+                slot.getTrip().getBoat().getBoatName()
+        );
+    }
+
+    public Reservation updateReservationSlot(Long reservationId, Long slotId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        Slot slot = slotService.findById(slotId);
+
+        reservation.setSlot(slot);
+
+        return reservationRepository.save(reservation);
+
+    }
 
 }

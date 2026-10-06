@@ -1,24 +1,56 @@
 <div th:fragment="slots">
+
   <h2>Available Slots</h2>
 
-  <form th:action="@{/reservation}" method="get">
+  <!-- NEW RESERVATION -->
+  <form th:if="${reservationId == null}"
+        th:action="@{/reservation}"
+        method="get">
 
-    <input
-            th:if="${reservationId != null}"
-            type="hidden"
-            name="reservationId"
-            th:value="${reservationId}"
-    >
+    <div th:each="s : ${slots}">
+      <button type="submit"
+              name="slotId"
+              th:value="${s.id}">
+
+        <div>
+          <p th:text="${s.departureTime}"></p>
+          <p th:text="${s.date}"></p>
+        </div>
+
+      </button>
+    </div>
+
+  </form>
+
+
+  <!-- EDIT RESERVATION -->
+  <div th:if="${reservationId != null}">
+
     <div th:each="s : ${slots}"
          th:classappend="${s != null and s.equals(reservedSlot)} ? 'reserved'">
-      <button type="submit" name="slotId" th:value="${s.id}">
+
+      <button
+              type="button"
+              th:attr="hx-get=@{/edit/date/confirm(
+                        reservationId=${reservationId},
+                        newSlotId=${s.id}
+                    )}"
+              hx-target="#confirmation-container"
+              hx-swap="innerHTML">
         <div>
           <p th:text="${s.departureTime}"></p>
           <p th:text="${s.date}"></p>
         </div>
       </button>
-    </div>
-  </form>
 
-  <p th:if="${reservationCode != null}" th:text="${reservationCode}"></p>
+    </div>
+
+  </div>
+
+  <p th:if="${reservationCode != null}"
+     th:text="${reservationCode}">
+  </p>
+
+  <div id="confirmation-container"></div>
+
 </div>

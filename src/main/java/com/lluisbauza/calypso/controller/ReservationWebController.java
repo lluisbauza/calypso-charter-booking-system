@@ -9,10 +9,7 @@ import com.lluisbauza.calypso.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.*;
@@ -151,7 +148,6 @@ public class ReservationWebController {
     @GetMapping("/reservation")
     public String bookReservation(
             @RequestParam Long slotId,
-            @RequestParam(required = false) Long reservationId,
             Model model
     ) {
 
@@ -159,14 +155,8 @@ public class ReservationWebController {
 
         model.addAttribute("slot", slot);
 
-        if (reservationId != null) {
-            model.addAttribute("reservationId", reservationId);
-
-        }
-
         return "fragments/email-form";
     }
-
 
     @GetMapping("/reservation/email")
     public String checkEmail(
@@ -227,11 +217,36 @@ public class ReservationWebController {
             @RequestParam Long reservationId,
             Model model, RedirectAttributes redirectAttributes) {
 
-
         redirectAttributes.addAttribute("reservationId", reservationId);
 
         return "redirect:/dates";
+    }
 
+    @GetMapping("/edit/date/confirm")
+    public String confirmDateChange(
+            @RequestParam Long reservationId,
+            @RequestParam Long newSlotId,
+            Model model
+    ) {
+        model.addAttribute("reservationId", reservationId);
+        model.addAttribute("newSlotId", newSlotId);
+        model.addAttribute("oldReservation", reservationService.getReservationBasicInfo(reservationId));
+        model.addAttribute("newReservation", reservationService.getNewReservationInfo(reservationId, newSlotId));
+
+        return "fragments/date-change-confirmation :: confirmation";
+    }
+
+    @PostMapping("/edit/date/success")
+    public String updateDateChange(
+            @RequestParam Long reservationId,
+            @RequestParam Long newSlotId,
+            Model model
+    ) {
+
+        Reservation reservation = reservationService.updateReservationSlot(reservationId, newSlotId);
+        model.addAttribute("reservation", reservation);
+
+        return "reservation-confirmation";
     }
 
 }
