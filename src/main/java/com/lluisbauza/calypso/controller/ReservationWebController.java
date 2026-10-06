@@ -108,7 +108,10 @@ public class ReservationWebController {
 
             Boat reservedBoat = reservationService.getBoatByReservationId(reservationId);
             model.addAttribute("reservedBoat", reservedBoat);
-            boats.add(reservedBoat);
+
+            if (date.equals(reservationService.getReservationDate(reservationId))) {
+                boats.add(reservedBoat);
+            }
         }
 
         model.addAttribute("boats", boats);
@@ -137,7 +140,11 @@ public class ReservationWebController {
 
             var reservedSlot = reservationService.getSlotByReservationId(reservationId);
             model.addAttribute("reservedSlot", reservedSlot);
-            slots.add(reservedSlot);
+
+            if (date.equals(reservationService.getReservationDate(reservationId))
+                    && boatId.equals(reservedSlot.getTrip().getBoat().getId())) {
+                slots.add(reservedSlot);
+            }
         }
 
         model.addAttribute("slots", slots);
