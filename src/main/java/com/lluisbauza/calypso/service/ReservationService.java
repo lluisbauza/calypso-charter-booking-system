@@ -4,7 +4,9 @@ import com.lluisbauza.calypso.dto.ReservationBasicInfo;
 import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
+import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.exception.ReservationNotFoundException;
+import com.lluisbauza.calypso.exception.SlotNotAvailableException;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.model.Reservation;
@@ -195,17 +197,32 @@ public class ReservationService {
         );
     }
 
+    @Transactional
     public Reservation updateReservationSlot(Long reservationId, Long slotId) {
+
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
         if (reservation == null) {
             throw new ReservationNotFoundException("Reservation not found");
         }
-        Slot slot = slotService.findById(slotId);
 
-        reservation.setSlot(slot);
+        Slot oldSlot = reservation.getSlot();
+        Slot newSlot = slotService.findById(slotId);
+
+        if (oldSlot.getId().equals(newSlot.getId())) {
+            return reservation;
+        }
+
+        if (newSlot.getAvailability() != SlotAvailability.AVAILABLE) {
+            throw new SlotNotAvailableException("Slot not available");
+        }
+
+        oldSlot.setAvailability(SlotAvailability.AVAILABLE);
+        newSlot.setAvailability(SlotAvailability.BOOKED);
+
+        reservation.setSlot(newSlot);
 
         return reservationRepository.save(reservation);
-
     }
 
 }
