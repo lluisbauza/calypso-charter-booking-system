@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Calypso')}"></head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main>
+  <h1>Trip CANCELLED successfully</h1>
+  <p th:text="${reservation.reservationCode}"></p>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

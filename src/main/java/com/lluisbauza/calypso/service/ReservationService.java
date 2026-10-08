@@ -267,6 +267,17 @@ public class ReservationService {
 
     }
 
+    @Transactional
+    public Reservation cancelReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        reservation.getSlot().setAvailability(SlotAvailability.AVAILABLE);
 
+        return reservationRepository.save(reservation);
+
+    }
 
 }

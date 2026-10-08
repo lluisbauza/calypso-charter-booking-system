@@ -282,4 +282,26 @@ public class ReservationWebController {
         return "reservation-confirmation";
     }
 
+    @GetMapping("/edit/options/cancel")
+    public String cancelReservationCheck(
+            @RequestParam Long reservationId,
+            Model model
+    ) {
+        model.addAttribute("reservationId", reservationId);
+
+        return "cancellation-request";
+    }
+
+    @PostMapping("/edit/options/cancel")
+    public String cancelReservationConfirmation(
+            @RequestParam Long reservationId,
+            Model model
+    ) {
+        Reservation reservation = reservationService.cancelReservation(reservationId);
+        model.addAttribute("reservation", reservation);
+
+        return "reservation-cancelled";
+    }
+
+
 }
