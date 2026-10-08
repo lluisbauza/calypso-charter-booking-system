@@ -1,6 +1,7 @@
 package com.lluisbauza.calypso.service;
 
 import com.lluisbauza.calypso.dto.ReservationBasicInfo;
+import com.lluisbauza.calypso.dto.ReservationEditRequest;
 import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
@@ -222,7 +223,50 @@ public class ReservationService {
 
         reservation.setSlot(newSlot);
 
-        return reservationRepository.save(reservation);
+        Reservation modifiedReservation = reservationRepository.save(reservation);
+
+        sendConfirmationHtmlEmail(modifiedReservation);
+
+        return modifiedReservation;
+
     }
+
+    public ReservationEditRequest getReservationEditRequest(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+        var client = reservation.getClient();
+
+        return new ReservationEditRequest(
+                client.getId(),
+                client.getFirstName(),
+                client.getLastName(),
+                client.getEmail(),
+                client.getPhoneNumber(),
+                reservation.getPax()
+        );
+    }
+
+    public Reservation updateReservationInformation(Long reservationId, ReservationEditRequest reservationEditRequest) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
+
+        reservation.getClient().setFirstName(reservationEditRequest.firstName());
+        reservation.getClient().setLastName(reservationEditRequest.lastName());
+        reservation.getClient().setPhoneNumber(reservationEditRequest.phoneNumber());
+        reservation.setPax(reservationEditRequest.pax());
+
+        Reservation modifiedReservation = reservationRepository.save(reservation);
+
+        sendConfirmationHtmlEmail(modifiedReservation);
+
+        return modifiedReservation;
+
+    }
+
+
 
 }

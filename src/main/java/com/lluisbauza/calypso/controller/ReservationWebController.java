@@ -1,5 +1,6 @@
 package com.lluisbauza.calypso.controller;
 
+import com.lluisbauza.calypso.dto.ReservationEditRequest;
 import com.lluisbauza.calypso.dto.ReservationSearchRequest;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
@@ -251,6 +252,31 @@ public class ReservationWebController {
     ) {
 
         Reservation reservation = reservationService.updateReservationSlot(reservationId, newSlotId);
+        model.addAttribute("reservation", reservation);
+
+        return "reservation-confirmation";
+    }
+
+    @GetMapping("/edit/options/contact")
+    public String editContactForm(
+            @RequestParam Long reservationId,
+            Model model) {
+
+        model.addAttribute("reservationId", reservationId);
+        var reservationEditRequest = reservationService.getReservationEditRequest(reservationId);
+        model.addAttribute("reservationEditRequest", reservationEditRequest);
+
+        return "edit-contact";
+    }
+
+    @PostMapping("/edit/options/contact")
+    public String updateContactForm(
+            @RequestParam Long reservationId,
+            @ModelAttribute ReservationEditRequest reservationEditRequest,
+            Model model
+    ) {
+
+        var reservation = reservationService.updateReservationInformation(reservationId, reservationEditRequest);
         model.addAttribute("reservation", reservation);
 
         return "reservation-confirmation";
