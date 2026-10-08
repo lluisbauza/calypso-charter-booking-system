@@ -1,6 +1,7 @@
 package com.lluisbauza.calypso.service;
 
 import com.lluisbauza.calypso.dto.ReservationEmailData;
+import com.lluisbauza.calypso.enums.ReservationStatus;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.MailException;
@@ -30,7 +31,13 @@ public class EmailHtmlService {
             Context context = new Context();
             context.setVariable("reservation", data);
 
-            String html = templateEngine.process("email/reservation-confirmation", context);
+            String html;
+
+            if (data.status().equals(ReservationStatus.CANCELLED)) {
+                html = templateEngine.process("email/reservation-cancellation", context);
+            } else {
+                html = templateEngine.process("email/reservation-confirmation", context);
+            }
 
             helper.setTo(to);
             helper.setSubject(subject);

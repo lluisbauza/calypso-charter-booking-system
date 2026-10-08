@@ -8,6 +8,7 @@ import com.lluisbauza.calypso.enums.ReservationStatus;
 import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.exception.ReservationNotFoundException;
 import com.lluisbauza.calypso.exception.SlotNotAvailableException;
+import com.lluisbauza.calypso.exception.SlotNotFoundException;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.model.Reservation;
@@ -40,6 +41,16 @@ public class ReservationService {
     @Transactional
     public Reservation createReservation(ReservationRequest reservationRequest) {
 
+        Slot slotRequested = slotService.findById(reservationRequest.getSlotId());
+
+        if (slotRequested == null) {
+            throw new SlotNotFoundException("Slot not found");
+        }
+        
+        if (slotRequested.getAvailability() != SlotAvailability.AVAILABLE) {
+            throw new SlotNotAvailableException("Slot is not available");
+        }
+
         Client client = clientService.updateClient(reservationRequest);
         Slot slot = slotService.updateSlotBookedById(reservationRequest.getSlotId());
 
@@ -52,23 +63,33 @@ public class ReservationService {
 
         Reservation savedReservation = reservationRepository.save(reservation);
         if (savedReservation != null) {
-            sendConfirmationHtmlEmail(savedReservation);
+            sendHtmlEmail(savedReservation);
         }
         return savedReservation;
 
     }
 
-    public void sendConfirmationHtmlEmail(Reservation reservation) {
+    public void sendHtmlEmail(Reservation reservation) {
 
         String name = reservation.getClient().getFirstName() +  " " + reservation.getClient().getLastName();
-        String subject = "Reservation Confirmation - " + reservation.getReservationCode();
+
+        String subject = "";
+
+        if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+            subject = "Reservation Confirmation - ";
+        } else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+            subject = "Reservation Cancelled - ";
+        }
+
+        subject += reservation.getReservationCode();
 
         ReservationEmailData data = new ReservationEmailData(
                 name,
                 reservation.getReservationCode(),
                 reservation.getSlot().getDate(),
                 reservation.getSlot().getDepartureTime(),
-                reservation.getPax()
+                reservation.getPax(),
+                reservation.getStatus()
         );
 
         emailHtmlService.sendEmailWithHtml(reservation.getClient().getEmail(), subject, data);
@@ -118,64 +139,50 @@ public class ReservationService {
         return sb.toString();
     }
 
-    public Reservation getReservationByCodeAndEmail(String reservationCode, String email) {
-        return reservationRepository.findByCodeAndEmail(reservationCode, email);
+    public Reservation getReservationByCodeAndEmailIfConfirmed(String reservationCode, String email) {
+        return reservationRepository.findByCodeAndEmailIfConfirmed(reservationCode, email);
     }
 
-    public LocalDate getReservationDate(Long reservationId) {
-
+    private Reservation getReservationById(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
 
         if (reservation == null) {
             throw new ReservationNotFoundException("Reservation not found");
         }
 
-        return reservation.getSlot().getDate();
-    }
-
-    public String getReservationCode(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
-        return reservation.getReservationCode();
-    }
-
-    public Boat getBoatByReservationId(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
-
-        return reservation.getSlot().getTrip().getBoat();
-    }
-
-    public Slot getSlotByReservationId(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
-
-        return reservation.getSlot();
-    }
-
-    public Reservation changeReservationSlot(Long reservationId, Slot slot) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
-        reservation.setSlot(slot);
-        reservationRepository.save(reservation);
         return reservation;
     }
 
-    public ReservationBasicInfo getReservationBasicInfo(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+    private Reservation getReservationByIdIfConfirmed(Long reservationId) {
+        Reservation reservation = reservationRepository.findByIdIfConfirmed(reservationId).orElse(null);
+
         if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
+            throw new ReservationNotFoundException("Reservation not found or already cancelled");
         }
+
+        return reservation;
+    }
+
+    public LocalDate getReservationDate(Long reservationId) {
+        return getReservationById(reservationId).getSlot().getDate();
+    }
+
+    public String getReservationCode(Long reservationId) {
+        return getReservationById(reservationId).getReservationCode();
+    }
+
+    public Boat getBoatByReservationId(Long reservationId) {
+        return getReservationById(reservationId).getSlot().getTrip().getBoat();
+    }
+
+    public Slot getSlotByReservationId(Long reservationId) {
+        return getReservationById(reservationId).getSlot();
+    }
+
+    public ReservationBasicInfo getReservationBasicInfo(Long reservationId) {
+
+        Reservation reservation = getReservationById(reservationId);
+
         return new ReservationBasicInfo(
                 reservation.getReservationCode(),
                 reservation.getSlot().getDate(),
@@ -185,11 +192,15 @@ public class ReservationService {
     }
 
     public ReservationBasicInfo getNewReservationInfo(Long reservationId, Long newSlotId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
+        Reservation reservation = getReservationById(reservationId);
+
         Slot slot = slotService.findById(newSlotId);
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
+
+        if(slot == null) {
+            throw new SlotNotFoundException("Slot not found");
         }
+
         return new ReservationBasicInfo(
                 reservation.getReservationCode(),
                 slot.getDate(),
@@ -201,14 +212,14 @@ public class ReservationService {
     @Transactional
     public Reservation updateReservationSlot(Long reservationId, Long slotId) {
 
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
+        Reservation reservation = getReservationByIdIfConfirmed(reservationId);
 
         Slot oldSlot = reservation.getSlot();
         Slot newSlot = slotService.findById(slotId);
+
+        if(newSlot == null) {
+            throw new SlotNotFoundException("Slot not found");
+        }
 
         if (oldSlot.getId().equals(newSlot.getId())) {
             return reservation;
@@ -225,17 +236,16 @@ public class ReservationService {
 
         Reservation modifiedReservation = reservationRepository.save(reservation);
 
-        sendConfirmationHtmlEmail(modifiedReservation);
+        sendHtmlEmail(modifiedReservation);
 
         return modifiedReservation;
 
     }
 
     public ReservationEditRequest getReservationEditRequest(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
+
+        Reservation reservation = getReservationByIdIfConfirmed(reservationId);
+
         var client = reservation.getClient();
 
         return new ReservationEditRequest(
@@ -249,10 +259,8 @@ public class ReservationService {
     }
 
     public Reservation updateReservationInformation(Long reservationId, ReservationEditRequest reservationEditRequest) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
+
+        Reservation reservation = getReservationByIdIfConfirmed(reservationId);
 
         reservation.getClient().setFirstName(reservationEditRequest.firstName());
         reservation.getClient().setLastName(reservationEditRequest.lastName());
@@ -261,7 +269,7 @@ public class ReservationService {
 
         Reservation modifiedReservation = reservationRepository.save(reservation);
 
-        sendConfirmationHtmlEmail(modifiedReservation);
+        sendHtmlEmail(modifiedReservation);
 
         return modifiedReservation;
 
@@ -269,14 +277,14 @@ public class ReservationService {
 
     @Transactional
     public Reservation cancelReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
-        if (reservation == null) {
-            throw new ReservationNotFoundException("Reservation not found");
-        }
+        Reservation reservation = getReservationByIdIfConfirmed(reservationId);
+
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservation.getSlot().setAvailability(SlotAvailability.AVAILABLE);
 
-        return reservationRepository.save(reservation);
+        var cancelledReservation = reservationRepository.save(reservation);
+        sendHtmlEmail(cancelledReservation);
+        return cancelledReservation;
 
     }
 

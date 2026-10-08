@@ -207,7 +207,7 @@ public class ReservationWebController {
             Model model
     ) {
 
-        Reservation reservation = reservationService.getReservationByCodeAndEmail(reservationSearchRequest.getReservationCode(), reservationSearchRequest.getEmail());
+        Reservation reservation = reservationService.getReservationByCodeAndEmailIfConfirmed(reservationSearchRequest.getReservationCode(), reservationSearchRequest.getEmail());
 
         if (reservation == null) {
             model.addAttribute("notFound", "Reservation not found.");
