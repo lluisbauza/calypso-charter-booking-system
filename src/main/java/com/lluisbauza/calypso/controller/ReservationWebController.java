@@ -4,7 +4,6 @@ import com.lluisbauza.calypso.dto.ReservationEditRequest;
 import com.lluisbauza.calypso.dto.ReservationSearchRequest;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
-import com.lluisbauza.calypso.exception.CapacityExceededException;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.service.*;
@@ -211,16 +210,10 @@ public class ReservationWebController {
             return "reservation-form";
         }
 
-        try {
-            Reservation reservation = reservationService.createReservation(reservationRequest);
-            model.addAttribute("reservation", reservation);
+        Reservation reservation = reservationService.createReservation(reservationRequest);
+        model.addAttribute("reservation", reservation);
 
-            return "reservation-confirmation";
-
-        } catch (CapacityExceededException e) {
-            bindingResult.reject("Capacity", e.getMessage());
-            return "reservation-form";
-        }
+        return "reservation-confirmation";
 
     }
 
@@ -231,10 +224,14 @@ public class ReservationWebController {
 
     @PostMapping("/edit/search")
     public String findReservation(
-            @ModelAttribute ReservationSearchRequest reservationSearchRequest,
-            RedirectAttributes redirectAttributes,
+            @Valid @ModelAttribute ReservationSearchRequest reservationSearchRequest,
+            BindingResult bindingResult,
             Model model
     ) {
+
+        if (bindingResult.hasErrors()) {
+            return "edit-form";
+        }
 
         Reservation reservation = reservationService.getReservationByCodeAndEmailIfConfirmed(reservationSearchRequest.getReservationCode(), reservationSearchRequest.getEmail());
 
@@ -312,9 +309,14 @@ public class ReservationWebController {
     @PostMapping("/edit/options/contact")
     public String updateContactForm(
             @RequestParam Long reservationId,
-            @ModelAttribute ReservationEditRequest reservationEditRequest,
+            @Valid @ModelAttribute ReservationEditRequest reservationEditRequest,
+            BindingResult bindingResult,
             Model model
     ) {
+
+        if (bindingResult.hasErrors()) {
+            return "edit-contact";
+        }
 
         var reservation = reservationService.updateReservationInformation(reservationId, reservationEditRequest);
         model.addAttribute("reservation", reservation);

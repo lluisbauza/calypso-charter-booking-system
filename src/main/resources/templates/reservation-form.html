@@ -37,13 +37,7 @@
 
         <input type="hidden" th:field="*{slotId}">
         <input type="hidden" th:field="*{pax}">
-        <input type="hidden" th:field="*{slotId}">
 
-        <div class="field-error"
-             th:if="${#fields.hasGlobalErrors()}"
-             th:each="error : ${#fields.globalErrors()}"
-             th:text="${error}">
-        </div>
         <button type="submit">Book trip</button>
     </form>
 </main>
