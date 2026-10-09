@@ -5,7 +5,6 @@ public record ReservationEditRequest(
         String firstName,
         String lastName,
         String email,
-        String phoneNumber,
-        Integer pax
+        String phoneNumber
 ) {
 }

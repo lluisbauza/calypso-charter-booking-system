@@ -7,18 +7,48 @@
 <main>
   <h1>Edit information</h1>
 
-  <form th:action="@{/edit/options/contact}" method="post" th:object="${reservationEditRequest}">
+  <form th:action="@{/edit/options/contact}"
+        method="post"
+        th:object="${reservationEditRequest}">
 
-    <input type="hidden" name="reservationId" th:value="${reservationId}">
-    Email Address: <input type="email" th:field="*{email}" required disabled><br>
-    First Name: <input type="text" th:field="*{firstName}" required><br>
-    Last Name: <input type="text" th:field="*{lastName}" required><br>
-    Phone Number: <input type="text" th:field="*{phoneNumber}" required><br>
-    Pax: <input type="number" th:field="*{pax}" required><br>
+    <input type="hidden"
+           name="reservationId"
+           th:value="${reservationId}">
+    <div>
+      <label for="email">Email address</label>
+      <input type="email"
+             id="email"
+             th:field="*{email}"
+             disabled>
+    </div>
+
+    <div>
+      <label for="firstName">First name</label>
+      <input type="text"
+             id="firstName"
+             th:field="*{firstName}"
+             required>
+    </div>
+
+    <div>
+      <label for="lastName">Last name</label>
+      <input type="text"
+             id="lastName"
+             th:field="*{lastName}"
+             required>
+    </div>
+
+    <div>
+      <label for="phoneNumber">Phone number</label>
+      <input type="text"
+             id="phoneNumber"
+             th:field="*{phoneNumber}"
+             required>
+    </div>
 
     <button type="submit">Edit information</button>
-  </form>
 
+  </form>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>

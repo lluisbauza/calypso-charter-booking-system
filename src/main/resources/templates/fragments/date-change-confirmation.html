@@ -1,29 +1,40 @@
 <div th:fragment="confirmation">
+
     <h2>Confirm the changes</h2>
+
     <table>
         <thead>
-            <tr>
-                <td>Old reservation</td>
-                <td>New Reservation</td>
-            </tr>
+        <tr>
+            <th>Old reservation</th>
+            <th>New reservation</th>
+        </tr>
         </thead>
+
         <tbody>
-            <tr>
-                <td th:text="${oldReservation.date()}"></td>
-                <td th:text="${newReservation.date()}"></td>
-            </tr>
-            <tr>
-                <td th:text="${oldReservation.departureTime()}"></td>
-                <td th:text="${newReservation.departureTime()}"></td>
-            </tr>
-            <tr>
-                <td th:text="${oldReservation.boatName()}"></td>
-                <td th:text="${newReservation.boatName()}"></td>
-            </tr>
+        <tr>
+            <td th:text="${oldReservation.date()}"></td>
+            <td th:text="${newReservation.date()}"></td>
+        </tr>
+
+        <tr>
+            <td th:text="${oldReservation.departureTime()}"></td>
+            <td th:text="${newReservation.departureTime()}"></td>
+        </tr>
+
+        <tr>
+            <td th:text="${oldReservation.boatName()}"></td>
+            <td th:text="${newReservation.boatName()}"></td>
+        </tr>
+
+        <tr>
+            <td th:text="${oldPax}"></td>
+            <td th:text="${newPax}"></td>
+        </tr>
         </tbody>
     </table>
 
     <form th:action="@{/edit/date/success}" method="post">
+
         <input type="hidden"
                name="reservationId"
                th:value="${reservationId}">
@@ -32,12 +43,17 @@
                name="newSlotId"
                th:value="${newSlotId}">
 
+        <input type="hidden"
+               name="newPax"
+               th:value="${newPax}">
+
         <button type="submit">Confirm</button>
+
     </form>
+
     <button type="button"
             onclick="document.getElementById('confirmation-container').innerHTML = ''">
         Cancel
     </button>
+
 </div>
-
-

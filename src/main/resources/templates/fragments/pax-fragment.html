@@ -1,0 +1,50 @@
+<div th:fragment="pax">
+
+  <h2>Select passengers</h2>
+
+  <p>
+    Boat:
+    <strong th:text="${boat.boatName}"></strong>
+  </p>
+
+  <p>
+    Maximum capacity:
+    <span th:text="${boat.capacity}"></span>
+  </p>
+
+  <form th:action="@{/slots/fragment}"
+        method="get"
+        th:attr="hx-get=@{/slots/fragment}"
+        hx-target="#slots-container"
+        hx-swap="innerHTML">
+
+    <input type="hidden"
+           name="date"
+           th:value="${date}">
+
+    <input type="hidden"
+           name="boatId"
+           th:value="${boat.id}">
+
+    <input th:if="${reservationId != null}"
+           type="hidden"
+           name="reservationId"
+           th:value="${reservationId}">
+
+    <div>
+      <label for="pax">Number of passengers</label>
+
+      <input type="number"
+             id="pax"
+             name="pax"
+             min="1"
+             th:attr="max=${boat.capacity}"
+             th:value="${currentPax}"
+             required>
+    </div>
+
+    <button type="submit">Continue</button>
+
+  </form>
+
+</div>

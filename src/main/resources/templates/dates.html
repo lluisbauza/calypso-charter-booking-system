@@ -43,7 +43,7 @@
                         type="button"
                         th:text="${day.dayOfMonth}"
                         th:attr="hx-get=@{/boats/fragment(date=${day}, reservationId=${reservationId})}"
-                        hx-target="#boats-container"
+                        hx-target="#selection-container"
                         hx-swap="innerHTML">
                 </button>
 
@@ -57,8 +57,11 @@
     </table>
 
     <p th:if="${reservationCode != null}" th:text="${reservationCode}"></p>
-    <div id="boats-container"></div>
-    <div id="slots-container"></div>
+    <div id="selection-container">
+        <div id="boats-container"></div>
+        <div id="pax-container"></div>
+        <div id="slots-container"></div>
+    </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 

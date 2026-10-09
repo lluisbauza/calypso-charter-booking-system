@@ -219,38 +219,41 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation updateReservationSlot(Long reservationId, Long slotId) {
-
+    public Reservation updateReservationSlot(
+            Long reservationId,
+            Long slotId,
+            Integer pax
+    ) {
         Reservation reservation = getReservationByIdIfConfirmed(reservationId);
 
         Slot oldSlot = reservation.getSlot();
         Slot newSlot = slotService.findById(slotId);
 
-        checkCapacity(newSlot, reservation.getPax());
-
-        if(newSlot == null) {
+        if (newSlot == null) {
             throw new SlotNotFoundException("Slot not found");
         }
 
-        if (oldSlot.getId().equals(newSlot.getId())) {
-            return reservation;
+        checkCapacity(newSlot, pax);
+
+        if (!oldSlot.getId().equals(newSlot.getId())) {
+
+            if (newSlot.getAvailability() != SlotAvailability.AVAILABLE) {
+                throw new SlotNotAvailableException("Slot not available");
+            }
+
+            oldSlot.setAvailability(SlotAvailability.AVAILABLE);
+            newSlot.setAvailability(SlotAvailability.BOOKED);
+
+            reservation.setSlot(newSlot);
         }
 
-        if (newSlot.getAvailability() != SlotAvailability.AVAILABLE) {
-            throw new SlotNotAvailableException("Slot not available");
-        }
-
-        oldSlot.setAvailability(SlotAvailability.AVAILABLE);
-        newSlot.setAvailability(SlotAvailability.BOOKED);
-
-        reservation.setSlot(newSlot);
+        reservation.setPax(pax);
 
         Reservation modifiedReservation = reservationRepository.save(reservation);
 
         sendHtmlEmail(modifiedReservation);
 
         return modifiedReservation;
-
     }
 
     public ReservationEditRequest getReservationEditRequest(Long reservationId) {
@@ -263,8 +266,7 @@ public class ReservationService {
                 client.getFirstName(),
                 client.getLastName(),
                 client.getEmail(),
-                client.getPhoneNumber(),
-                reservation.getPax()
+                client.getPhoneNumber()
         );
     }
 
@@ -275,7 +277,6 @@ public class ReservationService {
         reservation.getClient().setFirstName(reservationEditRequest.firstName());
         reservation.getClient().setLastName(reservationEditRequest.lastName());
         reservation.getClient().setPhoneNumber(reservationEditRequest.phoneNumber());
-        reservation.setPax(reservationEditRequest.pax());
 
         Reservation modifiedReservation = reservationRepository.save(reservation);
 
@@ -296,6 +297,10 @@ public class ReservationService {
         sendHtmlEmail(cancelledReservation);
         return cancelledReservation;
 
+    }
+
+    public Integer getReservationPax(Long reservationId) {
+        return getReservationByIdIfConfirmed(reservationId).getPax();
     }
 
 }

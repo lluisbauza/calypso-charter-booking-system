@@ -22,4 +22,8 @@ public class BoatService {
         return boatRepository.findBoatAvailableByDate(date, availability);
     }
 
+    public Boat findById(Long boatId) {
+        return boatRepository.findById(boatId).orElse(null);
+    }
+
 }

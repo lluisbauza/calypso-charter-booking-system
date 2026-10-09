@@ -131,18 +131,23 @@ public class ReservationWebController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date,
             @RequestParam Long boatId,
+            @RequestParam Integer pax,
             @RequestParam(required = false) Long reservationId,
-            Model model) {
-
+            Model model
+    ) {
         var slots = slotService.findAvailableSlotsByBoatIdAndDate(boatId, date);
 
         if (reservationId != null) {
             model.addAttribute("reservationId", reservationId);
 
-            String reservationCode = reservationService.getReservationCode(reservationId);
+            String reservationCode =
+                    reservationService.getReservationCode(reservationId);
+
             model.addAttribute("reservationCode", reservationCode);
 
-            var reservedSlot = reservationService.getSlotByReservationId(reservationId);
+            var reservedSlot =
+                    reservationService.getSlotByReservationId(reservationId);
+
             model.addAttribute("reservedSlot", reservedSlot);
 
             if (date.equals(reservationService.getReservationDate(reservationId))
@@ -152,6 +157,7 @@ public class ReservationWebController {
         }
 
         model.addAttribute("slots", slots);
+        model.addAttribute("pax", pax);
 
         return "fragments/slots-fragment :: slots";
     }
@@ -159,12 +165,17 @@ public class ReservationWebController {
     @GetMapping("/reservation")
     public String bookReservation(
             @RequestParam Long slotId,
+            @RequestParam Integer pax,
             Model model
     ) {
-
         var slot = slotService.findById(slotId);
 
+        if (slot == null) {
+            throw new IllegalArgumentException("Slot not found");
+        }
+
         model.addAttribute("slot", slot);
+        model.addAttribute("pax", pax);
 
         return "fragments/email-form";
     }
@@ -172,17 +183,21 @@ public class ReservationWebController {
     @GetMapping("/reservation/email")
     public String checkEmail(
             @RequestParam Long slotId,
+            @RequestParam Integer pax,
             @RequestParam String email,
             Model model
     ) {
-
         ReservationRequest reservationRequest =
-                clientService.getReservationRequestBySlotIdAndClientEmail(slotId, email);
+                clientService.getReservationRequestBySlotIdAndClientEmail(
+                        slotId,
+                        email
+                );
+
+        reservationRequest.setPax(pax);
 
         model.addAttribute("reservationRequest", reservationRequest);
 
         return "reservation-form";
-
     }
 
     @PostMapping("/reservation/email")
@@ -203,8 +218,7 @@ public class ReservationWebController {
             return "reservation-confirmation";
 
         } catch (CapacityExceededException e) {
-            bindingResult.rejectValue("pax", "Capacity", e.getMessage());
-
+            bindingResult.reject("Capacity", e.getMessage());
             return "reservation-form";
         }
 
@@ -249,12 +263,18 @@ public class ReservationWebController {
     public String confirmDateChange(
             @RequestParam Long reservationId,
             @RequestParam Long newSlotId,
+            @RequestParam Integer newPax,
             Model model
     ) {
         model.addAttribute("reservationId", reservationId);
         model.addAttribute("newSlotId", newSlotId);
         model.addAttribute("oldReservation", reservationService.getReservationBasicInfo(reservationId));
         model.addAttribute("newReservation", reservationService.getNewReservationInfo(reservationId, newSlotId));
+        model.addAttribute("newPax", newPax);
+        model.addAttribute(
+                "oldPax",
+                reservationService.getReservationPax(reservationId)
+        );
 
         return "fragments/date-change-confirmation :: confirmation";
     }
@@ -263,10 +283,15 @@ public class ReservationWebController {
     public String updateDateChange(
             @RequestParam Long reservationId,
             @RequestParam Long newSlotId,
+            @RequestParam Integer newPax,
             Model model
     ) {
+        Reservation reservation = reservationService.updateReservationSlot(
+                reservationId,
+                newSlotId,
+                newPax
+        );
 
-        Reservation reservation = reservationService.updateReservationSlot(reservationId, newSlotId);
         model.addAttribute("reservation", reservation);
 
         return "reservation-confirmation";
@@ -318,5 +343,35 @@ public class ReservationWebController {
         return "reservation-cancelled";
     }
 
+    @GetMapping("/pax/fragment")
+    public String getPaxFragment(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
+            @RequestParam Long boatId,
+            @RequestParam(required = false) Long reservationId,
+            Model model
+    ) {
+        Boat boat = boatService.findById(boatId);
+
+        if (boat == null) {
+            throw new IllegalArgumentException("Boat not found");
+        }
+
+        model.addAttribute("boat", boat);
+        model.addAttribute("date", date);
+        model.addAttribute("reservationId", reservationId);
+
+        if (reservationId != null) {
+            model.addAttribute(
+                    "currentPax",
+                    reservationService.getReservationPax(reservationId)
+            );
+        } else {
+            model.addAttribute("currentPax", 1);
+        }
+
+        return "fragments/pax-fragment :: pax";
+    }
 
 }

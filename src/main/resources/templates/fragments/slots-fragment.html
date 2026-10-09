@@ -3,44 +3,50 @@
   <h2>Available Slots</h2>
 
   <!-- NEW RESERVATION -->
-  <form th:if="${reservationId == null}"
-        th:action="@{/reservation}"
-        method="get">
+  <div th:if="${reservationId == null}">
 
     <div th:each="s : ${slots}">
-      <button type="submit"
-              name="slotId"
-              th:value="${s.id}">
 
-        <div>
-          <p th:text="${s.departureTime}"></p>
-          <p th:text="${s.date}"></p>
-        </div>
+      <form th:action="@{/reservation}" method="get">
 
-      </button>
+        <input type="hidden"
+               name="slotId"
+               th:value="${s.id}">
+
+        <input type="hidden"
+               name="pax"
+               th:value="${pax}">
+
+        <button type="submit">
+          <span th:text="${s.departureTime}"></span>
+          <span th:text="${s.date}"></span>
+        </button>
+
+      </form>
+
     </div>
 
-  </form>
-
+  </div>
 
   <!-- EDIT RESERVATION -->
   <div th:if="${reservationId != null}">
 
     <div th:each="s : ${slots}"
-         th:classappend="${s != null and s.equals(reservedSlot)} ? 'reserved'">
+         th:classappend="${reservedSlot != null
+                 and s.id.equals(reservedSlot.id)} ? 'reserved'">
 
-      <button
-              type="button"
+      <button type="button"
               th:attr="hx-get=@{/edit/date/confirm(
                         reservationId=${reservationId},
-                        newSlotId=${s.id}
+                        newSlotId=${s.id},
+                        newPax=${pax}
                     )}"
               hx-target="#confirmation-container"
               hx-swap="innerHTML">
-        <div>
-          <p th:text="${s.departureTime}"></p>
-          <p th:text="${s.date}"></p>
-        </div>
+
+        <span th:text="${s.departureTime}"></span>
+        <span th:text="${s.date}"></span>
+
       </button>
 
     </div>
@@ -48,8 +54,7 @@
   </div>
 
   <p th:if="${reservationCode != null}"
-     th:text="${reservationCode}">
-  </p>
+     th:text="${reservationCode}"></p>
 
   <div id="confirmation-container"></div>
 

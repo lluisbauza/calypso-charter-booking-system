@@ -6,7 +6,6 @@
   <div th:if="${reservationId != null}">
 
     <h2>Manage your reservation</h2>
-    <p th:text="${reservationId}"></p>
 
     <form th:action="@{/edit/options/contact}" method="get">
       <input type="hidden" name="reservationId" th:value="${reservationId}">
