@@ -9,10 +9,10 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class ExceptionControllerAdvice {
 
-    @ExceptionHandler({ReservationNotFoundException.class})
+    @ExceptionHandler({ReservationNotFoundException.class, SlotNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ModelAndView handleReservationNotFoundException(
-            ReservationNotFoundException e)
+    public ModelAndView handleNotFoundExceptions(
+            RuntimeException e)
     {
         ModelAndView modelAndView = new ModelAndView("error-page");
         modelAndView.addObject("errorDetails", new ErrorDetails(e.getMessage()));
@@ -20,21 +20,10 @@ public class ExceptionControllerAdvice {
         return modelAndView;
     }
 
-    @ExceptionHandler({SlotNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ModelAndView handleSlotNotFoundException(
-            SlotNotFoundException e)
-    {
-        ModelAndView modelAndView = new ModelAndView("error-page");
-        modelAndView.addObject("errorDetails", new ErrorDetails(e.getMessage()));
-
-        return modelAndView;
-    }
-
-    @ExceptionHandler({ReservationAlreadyCancelledException.class})
+    @ExceptionHandler({ReservationAlreadyCancelledException.class, SlotNotAvailableException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ModelAndView handleReservationAlreadyCancelledException(
-            ReservationAlreadyCancelledException e)
+    public ModelAndView handleConflictExceptions(
+            RuntimeException e)
     {
         ModelAndView modelAndView = new ModelAndView("error-page");
         modelAndView.addObject("errorDetails", new ErrorDetails(e.getMessage()));
@@ -42,21 +31,10 @@ public class ExceptionControllerAdvice {
         return modelAndView;
     }
 
-    @ExceptionHandler({SlotNotAvailableException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ModelAndView handleSlotNotAvailableException(
-            SlotNotAvailableException e)
-    {
-        ModelAndView modelAndView = new ModelAndView("error-page");
-        modelAndView.addObject("errorDetails", new ErrorDetails(e.getMessage()));
-
-        return modelAndView;
-    }
-
-    @ExceptionHandler({CapacityExceededException.class})
+    @ExceptionHandler({CapacityExceededException.class, InvalidPaxException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ModelAndView handleCapacityExceededException(
-            CapacityExceededException e)
+    public ModelAndView handleBadRequestExceptions(
+            RuntimeException e)
     {
         ModelAndView modelAndView = new ModelAndView("error-page");
         modelAndView.addObject("errorDetails", new ErrorDetails(e.getMessage()));

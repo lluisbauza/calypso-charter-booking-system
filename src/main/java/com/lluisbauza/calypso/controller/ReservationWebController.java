@@ -6,6 +6,7 @@ import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Reservation;
+import com.lluisbauza.calypso.model.Slot;
 import com.lluisbauza.calypso.service.*;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -283,6 +284,7 @@ public class ReservationWebController {
             @RequestParam Integer newPax,
             Model model
     ) {
+
         Reservation reservation = reservationService.updateReservationSlot(
                 reservationId,
                 newSlotId,

@@ -6,10 +6,7 @@ import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
 import com.lluisbauza.calypso.enums.SlotAvailability;
-import com.lluisbauza.calypso.exception.CapacityExceededException;
-import com.lluisbauza.calypso.exception.ReservationNotFoundException;
-import com.lluisbauza.calypso.exception.SlotNotAvailableException;
-import com.lluisbauza.calypso.exception.SlotNotFoundException;
+import com.lluisbauza.calypso.exception.*;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Client;
 import com.lluisbauza.calypso.model.Reservation;
@@ -41,6 +38,11 @@ public class ReservationService {
 
     private void checkCapacity(Slot slot, Integer pax) {
         Long boatCapacity = slot.getTrip().getBoat().getCapacity();
+
+        if (pax == null || pax < 1) {
+            throw new InvalidPaxException("Number of passengers must be at least 1.");
+        }
+
         if (boatCapacity < pax) {
             throw new CapacityExceededException(boatCapacity);
         }
