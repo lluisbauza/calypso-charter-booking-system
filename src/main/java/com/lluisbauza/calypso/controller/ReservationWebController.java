@@ -7,9 +7,11 @@ import com.lluisbauza.calypso.enums.SlotAvailability;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.service.*;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -184,10 +186,14 @@ public class ReservationWebController {
 
     @PostMapping("/reservation/email")
     public String createReservation(
-            @ModelAttribute ReservationRequest reservationRequest,
+            @Valid @ModelAttribute ReservationRequest reservationRequest,
+            BindingResult bindingResult,
             Model model
     ) {
 
+        if (bindingResult.hasErrors()) {
+            return "reservation-form";
+        }
         Reservation reservation = reservationService.createReservation(reservationRequest);
         model.addAttribute("reservation", reservation);
 

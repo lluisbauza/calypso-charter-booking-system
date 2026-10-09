@@ -11,16 +11,40 @@
 
     <form th:action="@{/reservation/email}" method="post" th:object="${reservationRequest}">
 
-        Email Address: <input type="email" th:field="*{email}" required><br>
-        First Name: <input type="text" th:field="*{firstName}" required><br>
-        Last Name: <input type="text" th:field="*{lastName}" required><br>
-        Phone Number: <input type="text" th:field="*{phoneNumber}" required><br>
-        Pax: <input type="number" th:field="*{pax}" required><br>
+        <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" th:field="*{email}" required>
+            <span class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <div>
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" th:field="*{firstName}" required>
+            <span class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+        </div>
+
+        <div>
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" th:field="*{lastName}" required>
+            <span class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+        </div>
+
+        <div>
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required>
+            <span class="field-error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+        </div>
+
+        <div>
+            <label for="pax">Pax</label>
+            <input type="number" id="pax" th:field="*{pax}" required>
+            <span class="field-error" th:if="${#fields.hasErrors('pax')}" th:errors="*{pax}"></span>
+        </div>
+
         <input type="hidden" th:field="*{slotId}">
 
         <button type="submit">Book trip</button>
     </form>
-
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

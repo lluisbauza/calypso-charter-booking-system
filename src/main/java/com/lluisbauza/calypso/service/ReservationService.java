@@ -46,7 +46,7 @@ public class ReservationService {
         if (slotRequested == null) {
             throw new SlotNotFoundException("Slot not found");
         }
-        
+
         if (slotRequested.getAvailability() != SlotAvailability.AVAILABLE) {
             throw new SlotNotAvailableException("Slot is not available");
         }
@@ -249,7 +249,6 @@ public class ReservationService {
         var client = reservation.getClient();
 
         return new ReservationEditRequest(
-                client.getId(),
                 client.getFirstName(),
                 client.getLastName(),
                 client.getEmail(),

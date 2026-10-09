@@ -11,7 +11,7 @@
 
     <form th:action="@{/reservation/email}" method="get">
 
-        Introduce your email address: <input type="email" name="email"><br>
+        Introduce your email address: <input type="email" name="email" required><br>
         <button type="submit" name="slotId" th:value="${slot.id}">Next</button>
 
     </form>
