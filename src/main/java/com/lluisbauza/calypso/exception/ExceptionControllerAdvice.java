@@ -53,6 +53,17 @@ public class ExceptionControllerAdvice {
         return modelAndView;
     }
 
+    @ExceptionHandler({CapacityExceededException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ModelAndView handleCapacityExceededException(
+            CapacityExceededException e)
+    {
+        ModelAndView modelAndView = new ModelAndView("error-page");
+        modelAndView.addObject("errorDetails", new ErrorDetails(e.getMessage()));
+
+        return modelAndView;
+    }
+
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleException(
@@ -63,8 +74,5 @@ public class ExceptionControllerAdvice {
 
         return modelAndView;
     }
-
-
-
 
 }

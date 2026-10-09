@@ -6,6 +6,7 @@ import com.lluisbauza.calypso.dto.ReservationEmailData;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.ReservationStatus;
 import com.lluisbauza.calypso.enums.SlotAvailability;
+import com.lluisbauza.calypso.exception.CapacityExceededException;
 import com.lluisbauza.calypso.exception.ReservationNotFoundException;
 import com.lluisbauza.calypso.exception.SlotNotAvailableException;
 import com.lluisbauza.calypso.exception.SlotNotFoundException;
@@ -38,6 +39,13 @@ public class ReservationService {
         this.emailHtmlService = emailHtmlService;
     }
 
+    private void checkCapacity(Slot slot, Integer pax) {
+        Long boatCapacity = slot.getTrip().getBoat().getCapacity();
+        if (boatCapacity < pax) {
+            throw new CapacityExceededException(boatCapacity);
+        }
+    }
+
     @Transactional
     public Reservation createReservation(ReservationRequest reservationRequest) {
 
@@ -51,6 +59,8 @@ public class ReservationService {
             throw new SlotNotAvailableException("Slot is not available");
         }
 
+        checkCapacity(slotRequested, reservationRequest.getPax());
+
         Client client = clientService.updateClient(reservationRequest);
         Slot slot = slotService.updateSlotBookedById(reservationRequest.getSlotId());
 
@@ -62,9 +72,8 @@ public class ReservationService {
         reservation.setReservationCode(generateReservationCode(reservation));
 
         Reservation savedReservation = reservationRepository.save(reservation);
-        if (savedReservation != null) {
-            sendHtmlEmail(savedReservation);
-        }
+        sendHtmlEmail(savedReservation);
+
         return savedReservation;
 
     }
@@ -216,6 +225,8 @@ public class ReservationService {
 
         Slot oldSlot = reservation.getSlot();
         Slot newSlot = slotService.findById(slotId);
+
+        checkCapacity(newSlot, reservation.getPax());
 
         if(newSlot == null) {
             throw new SlotNotFoundException("Slot not found");

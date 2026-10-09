@@ -4,6 +4,7 @@ import com.lluisbauza.calypso.dto.ReservationEditRequest;
 import com.lluisbauza.calypso.dto.ReservationSearchRequest;
 import com.lluisbauza.calypso.dto.ReservationRequest;
 import com.lluisbauza.calypso.enums.SlotAvailability;
+import com.lluisbauza.calypso.exception.CapacityExceededException;
 import com.lluisbauza.calypso.model.Boat;
 import com.lluisbauza.calypso.model.Reservation;
 import com.lluisbauza.calypso.service.*;
@@ -194,10 +195,18 @@ public class ReservationWebController {
         if (bindingResult.hasErrors()) {
             return "reservation-form";
         }
-        Reservation reservation = reservationService.createReservation(reservationRequest);
-        model.addAttribute("reservation", reservation);
 
-        return "reservation-confirmation";
+        try {
+            Reservation reservation = reservationService.createReservation(reservationRequest);
+            model.addAttribute("reservation", reservation);
+
+            return "reservation-confirmation";
+
+        } catch (CapacityExceededException e) {
+            bindingResult.rejectValue("pax", "Capacity", e.getMessage());
+
+            return "reservation-form";
+        }
 
     }
 
