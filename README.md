@@ -8,8 +8,7 @@ The project is being developed as a practical backend application to apply conce
 
 - Spring Boot
 - Spring Data JPA
-- PostgreSQL
-- RESTful architecture
+- MySQL
 - Validation
 - Exception handling
 - Testing

@@ -1,3 +1,5 @@
+USE calypso;
+
 -- CLIENT
 INSERT INTO client (first_name, last_name, email, phone_number)
 VALUES ('Test', 'Client', 'test@test.com', '600123456');
@@ -66,7 +68,7 @@ VALUES
             WHERE b.boat_name = 'Concorde'
               AND t.type = 'MORNING'
         ),
-        '2026-09-15',
+        '2026-11-15',
         '09:00',
         'AVAILABLE'
     ),
@@ -78,7 +80,7 @@ VALUES
             WHERE b.boat_name = 'Concorde'
               AND t.type = 'EVENING'
         ),
-        '2026-09-15',
+        '2026-11-16',
         '15:00',
         'AVAILABLE'
     ),
@@ -90,7 +92,7 @@ VALUES
             WHERE b.boat_name = 'Concorde'
               AND t.type = 'SUNSET'
         ),
-        '2026-09-15',
+        '2026-11-17',
         '19:30',
         'AVAILABLE'
     );
@@ -108,7 +110,7 @@ VALUES
             WHERE b.boat_name = 'Lusitania'
               AND t.type = 'MORNING'
         ),
-        '2026-09-15',
+        '2026-11-15',
         '09:00',
         'AVAILABLE'
     ),
@@ -120,7 +122,7 @@ VALUES
             WHERE b.boat_name = 'Lusitania'
               AND t.type = 'EVENING'
         ),
-        '2026-09-15',
+        '2026-11-16',
         '15:00',
         'AVAILABLE'
     ),
@@ -132,7 +134,7 @@ VALUES
             WHERE b.boat_name = 'Lusitania'
               AND t.type = 'SUNSET'
         ),
-        '2026-09-15',
+        '2026-11-17',
         '19:30',
         'AVAILABLE'
     );
